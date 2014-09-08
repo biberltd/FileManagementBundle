@@ -1,5 +1,5 @@
 <?php
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Entity;
+namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 use BiberLtd\Core\CoreEntity;
 use Doctrine\ORM\Mapping AS ORM;
 
@@ -26,7 +26,7 @@ class FileLocalization extends CoreEntity
     /**
      * @ORM\Id
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\FileManagementBundle\Entity\File",
+     *     targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File",
      *     inversedBy="localizations"
      * )
      * @ORM\JoinColumn(name="file", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -35,7 +35,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MultiLanguageSupportBundle\Entity\Language")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $language;

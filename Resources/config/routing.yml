@@ -1,12 +1,12 @@
 biberltd_core_file_management_manage:
     pattern:  files/{sortcolumn}/{sortorder}/{file_number}
-    defaults: { _controller: BiberLtdCoreBundlesContentManagementBundle:Manage:fileList }
+    defaults: { _controller: BiberLtdBundleContentManagementBundle:Manage:fileList }
     pattern:  files/edit/{file_id_or_code}
-    defaults: { _controller: BiberLtdCoreBundlesContentManagementBundle:Manage:fileEdit }
+    defaults: { _controller: BiberLtdBundleContentManagementBundle:Manage:fileEdit }
     pattern:  files/new
-    defaults: { _controller: BiberLtdCoreBundlesContentManagementBundle:Manage:fileNew }
+    defaults: { _controller: BiberLtdBundleContentManagementBundle:Manage:fileNew }
     pattern:  files/delete
-    defaults: { _controller: BiberLtdCoreBundlesContentManagementBundle:Manage:fileDelete }
+    defaults: { _controller: BiberLtdBundleContentManagementBundle:Manage:fileDelete }
     pattern:  files/upload
-    defaults: { _controller: BiberLtdCoreBundlesContentManagementBundle:Manage:fileUpload}
+    defaults: { _controller: BiberLtdBundleContentManagementBundle:Manage:fileUpload}
     

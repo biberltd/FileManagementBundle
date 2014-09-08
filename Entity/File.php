@@ -14,7 +14,7 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Entity;
+namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 
 use Doctrine\ORM\Mapping AS ORM;
 use \BiberLtd\Core\CoreLocalizableEntity;
@@ -104,7 +104,7 @@ class File extends CoreLocalizableEntity
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\MemberManagementBundle\Entity\FilesOfMember",
+     *     targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\FilesOfMember",
      *     mappedBy="file"
      * )
      */
@@ -112,7 +112,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\FileManagementBundle\Entity\FileLocalization",
+     *     targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization",
      *     mappedBy="file",
      *     cascade={"persist"}
      * )
@@ -120,14 +120,14 @@ class File extends CoreLocalizableEntity
     protected $localizations;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\SiteManagementBundle\Entity\Site")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;
 
     /** 
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\FileManagementBundle\Entity\FileUploadFolder",
+     *     targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder",
      *     inversedBy="files"
      * )
      * @ORM\JoinColumn(name="folder", referencedColumnName="id", nullable=false)

@@ -40,14 +40,14 @@
  *
  */
 
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Services;
+namespace BiberLtd\Bundle\FileManagementBundle\Services;
 
 /** Extends CoreModel */
 use BiberLtd\Core\CoreModel;
 /** Entities to be used */
-use BiberLtd\Core\Bundles\FileManagementBundle\Entity as BundleEntity;
+use BiberLtd\Bundle\FileManagementBundle\Entity as BundleEntity;
 /** Helper Models */
-use BiberLtd\Core\Bundles\SiteManagementBundle\Services as SMMService;
+use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
 /** Core Service */
 use BiberLtd\Core\Services as CoreServices;
 use BiberLtd\Core\Exceptions as CoreExceptions;
@@ -387,8 +387,8 @@ class FileManagementModel extends CoreModel {
      *
      * @use             $this->createException()
      * @use             $this->doesProductExist()
-     * @use             BiberLtd\Core\Bundles\FileManagementBundle\Entity\File()
-     * @use             BiberLtd\Core\Bundles\FileManagementBundle\Entity\FileUploadFolder()
+     * @use             BiberLtd\Bundle\FileManagementBundle\Entity\File()
+     * @use             BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder()
      *
      * @throws          InvalidParameterException
      * @throws          InvalidMethodException
@@ -1355,7 +1355,7 @@ class FileManagementModel extends CoreModel {
      * @version         1.0.0
      * @author          Said Imamoglu
      * 
-     * @use             \BiberLtd\Core\Bundles\FileManagementBundle\Entity\FileUploadFolder
+     * @use             \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder
      * @use             $this->createException()
      * @use             $this->insert_entities()
      * 
@@ -1397,7 +1397,7 @@ class FileManagementModel extends CoreModel {
              * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\                                  
              */
             foreach ($collection as $item) {
-                $entity = new \BiberLtd\Core\Bundles\FileManagementBundle\Entity\FileUploadFolder();
+                $entity = new \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder();
                 foreach ($item['folder'] as $column => $value) {
                     $folder_method = 'set_' . $column;
                     if (method_exists($entity, $folder_method)) {

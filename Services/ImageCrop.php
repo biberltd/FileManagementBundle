@@ -15,7 +15,7 @@
  * @date        10.05.2013
  * @version     1.2.0
  */
-use BiberLtd\Core\Bundles\FileManagementBundle\Services\ImageUpload;
+use BiberLtd\Bundle\FileManagementBundle\Services\ImageUpload;
 
 class ImageCrop extends ImageUpload {
 

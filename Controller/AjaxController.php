@@ -17,7 +17,7 @@
  *
  */
 
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Controller;
+namespace BiberLtd\Bundle\FileManagementBundle\Controller;
 
 use BiberLtd\Core\CoreController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -27,12 +27,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 /** Models to be used */
-use BiberLtd\Core\Bundles\ContentManagementBundle\Services as CMSService;
-use BiberLtd\Core\Bundles\MultiLanguageSupportBundle\Services as MLSService;
-use BiberLtd\Core\Bundles\GalleryBundle\Services as GService;
-use BiberLtd\Core\Bundles\SocialNetworkBundle\Services as SNBService;
-use BiberLtd\Core\Bundles\ProductManagementBundle\Services as PMBService;
-use BiberLtd\Core\Bundles\FileManagementBundle\Entity as FMBEntity;
+use BiberLtd\Bundle\ContentManagementBundle\Services as CMSService;
+use BiberLtd\Bundle\MultiLanguageSupportBundle\Services as MLSService;
+use BiberLtd\Bundle\GalleryBundle\Services as GService;
+use BiberLtd\Bundle\SocialNetworkBundle\Services as SNBService;
+use BiberLtd\Bundle\ProductManagementBundle\Services as PMBService;
+use BiberLtd\Bundle\FileManagementBundle\Entity as FMBEntity;
 
 class AjaxController extends CoreController {
 
@@ -383,7 +383,7 @@ class AjaxController extends CoreController {
      * @version         1.0.0
      * @author          Can Berkol
      *
-     * @see             BiberLtd\Core\Bundles\CoreBundle\Resources\views\cms\Modules\widget.multi_upload.html.smarty
+     * @see             BiberLtd\Bundle\CoreBundle\Resources\views\cms\Modules\widget.multi_upload.html.smarty
      *
      * @param           integer         $id
      *
@@ -424,7 +424,7 @@ class AjaxController extends CoreController {
      * @version         1.0.0
      * @author          Can Berkol
      *
-     * @see             BiberLtd\Core\Bundles\CoreBundle\Resources\views\cms\Modules\widget.multi_upload.html.smarty
+     * @see             BiberLtd\Bundle\CoreBundle\Resources\views\cms\Modules\widget.multi_upload.html.smarty
      *
      * @param           integer         $id
      *

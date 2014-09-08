@@ -1,10 +1,10 @@
 services:
     filemanagement.model:
-        class:        BiberLtd\Core\Bundles\FileManagementBundle\Services\FileManagementModel
+        class:        BiberLtd\Bundle\FileManagementBundle\Services\FileManagementModel
         arguments:    [@kernel, "default", "doctrine"]
     filemanagement_fileupload.model:
-        class:        BiberLtd\Core\Bundles\FileManagementBundle\Services\FileUpload
+        class:        BiberLtd\Bundle\FileManagementBundle\Services\FileUpload
     filemanagement_imageupload.model:
-        class:        BiberLtd\Core\Bundles\FileManagementBundle\Services\ImageUpload
+        class:        BiberLtd\Bundle\FileManagementBundle\Services\ImageUpload
     filemanagement_imagecrop.model:
-        class:        BiberLtd\Core\Bundles\FileManagementBundle\Services\ImageCrop
+        class:        BiberLtd\Bundle\FileManagementBundle\Services\ImageCrop

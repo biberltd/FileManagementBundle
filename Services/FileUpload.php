@@ -1,6 +1,6 @@
 <?php
 
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Services;
+namespace BiberLtd\Bundle\FileManagementBundle\Services;
 
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

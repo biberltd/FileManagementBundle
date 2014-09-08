@@ -18,7 +18,7 @@
  *
  */
 
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Controller;
+namespace BiberLtd\Bundle\FileManagementBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller,
     Symfony\Component\HttpKernel\Exception,
@@ -107,8 +107,8 @@ class TestController extends CoreController {
         /*
           $type='entity';
           if($type=='entity'){
-          $file = new \BiberLtd\Core\Bundles\FileManagementBundle\Entity\File();
-          $folder = new \BiberLtd\Core\Bundles\FileManagementBundle\Entity\FileUploadFolder();
+          $file = new \BiberLtd\Bundle\FileManagementBundle\Entity\File();
+          $folder = new \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder();
           $response = $folder->
           $folder->setName('FOLDER');
           $folder->setUrlKey('URL_KEY');

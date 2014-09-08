@@ -19,7 +19,7 @@
  *
  */
 
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Controller;
+namespace BiberLtd\Bundle\FileManagementBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller,
     Symfony\Component\HttpKernel\Exception,
