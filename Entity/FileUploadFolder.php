@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        FileUploadFolder
- * @package		BiberLtd\Core\FileManagementBundle
+ * @package		BiberLtd\Bundle\CoreBundle\FileManagementBundle
  *
  * @author		Murat Ünal
  * @version     1.0.1
@@ -13,9 +13,9 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Entity;
+namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Core\CoreEntity;
+use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
 /** 
  * @ORM\Entity
@@ -98,12 +98,12 @@ class FileUploadFolder extends CoreEntity
     private $count_files;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\FileManagementBundle\Entity\File", mappedBy="folder")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File", mappedBy="folder")
      */
     private $files;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\SiteManagementBundle\Entity\Site")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $site;

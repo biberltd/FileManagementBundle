@@ -16,8 +16,8 @@
  * @date        24.09.2012
  * @version     1.0.6
  */
-namespace BiberLtd\Core\Bundles\FileManagementBundle\Services;
-use BiberLtd\Core\Bundles\FileManagementBundle\Services\FileUpload;
+namespace BiberLtd\Bundle\FileManagementBundle\Services;
+use BiberLtd\Bundle\FileManagementBundle\Services\FileUpload;
 
 class ImageUpload extends FileUpload {
 
