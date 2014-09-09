@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<skipper version="3.0.0.1104" mvc="Symfony2" orm="Doctrine2">
+  <module name="FileManagementBundle" import-format="Doctrine2Php" import-path="../Entity" uuid="9d574194-22af-4673-a2ee-bb67ec7d212e">
+    <entity name="File" description="Stores information of uploaded files." uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="eb48c822-d519-40b2-846f-f8ee5774cb6c"/>
+      <field name="name" description="File name." type="string" size="165" required="true" uuid="850075c7-b27a-4ac6-9da5-9d6923873a7a"/>
+      <field name="url_key" description="Url key of file." type="string" size="255" required="true" uuid="4b9aa182-f322-42a8-9435-73bdcf173806"/>
+      <field name="source_original" description="File path of the original file." type="text" required="true" uuid="43b12b82-fd3b-493f-9a59-0d7331ffd637"/>
+      <field name="source_preview" description="File path of the preview file." type="text" uuid="e39cf1fa-8621-4087-877f-baac9711dadd"/>
+      <field name="type" description="i:image,a:audio,v:video,f:flash,d:document,p:package,s:software" type="string" size="1" default="i" required="true" uuid="b5111692-a20a-42e7-a7c1-11ff407e0ffc"/>
+      <field name="width" description="Width of file if exists." type="integer" size="5" uuid="9227ef8c-f9d8-4531-852e-bd41b5344246"/>
+      <field name="height" description="Height of file if exists." type="integer" size="5" uuid="6c300880-1ab5-47db-81b1-914c8adc35eb"/>
+      <field name="size" description="Size of file." type="decimal" size="5" default="0" required="true" unique="true" uuid="288b896d-a3dc-4063-934b-82ba160c4ef0"/>
+      <field name="mime_type" description="MIME type of file." type="string" size="45" required="true" uuid="7084cfd7-11a3-4fe4-9c06-5c6f3f78437e"/>
+      <field name="extension" description="File extension." type="string" size="6" required="true" uuid="db4bca7f-2194-4de9-bbee-2b09c01dee86"/>
+      <field name="site" description="If associated with a site..." type="integer" size="5" uuid="671d6423-c40e-4a20-a608-737032bad9ce"/>
+      <field name="folder" description="Folder where file is located" type="integer" size="10" required="true" uuid="7bc3e47f-9ab1-459d-9e07-30fbb7ab9312"/>
+      <field name="exif" description="If file is image, this field stores exif data." type="text" uuid="077ba7eb-6150-4a7e-9ba9-994a1efb84a6"/>
+      <field name="tags" description="Comma delimited tags." type="text" uuid="e293976f-f993-4281-8021-8723c49d5925"/>
+      <index name="idx_u_file_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_file_mime_type">
+        <index-field name="mime_type"/>
+      </index>
+      <index name="idx_n_file_extension">
+        <index-field name="extension"/>
+      </index>
+      <index name="idx_n_file_dimension">
+        <index-field name="width"/>
+        <index-field name="height"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">file</attribute>
+        <attribute name="export-file-name">File.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="File" to="Site" caption="idx_f_file_site" inverse-alias="site" uuid="b210e152-462a-45f8-b840-75b0217b73c5">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="File" to="FileUploadFolder" caption="idx_f_file_folder" owner-alias="files" inverse-alias="folder" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
+      <association-field from="folder" to="id"/>
+    </association>
+    <entity name="FileUploadFolder" description="Stores definitions of file upload folders and sets upload restrictions." uuid="c04c801c-5047-41eb-9209-dfd6732d5e31">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="70077195-d083-4431-8742-0e911b8c90c7"/>
+      <field name="name" description="User given folder name." type="string" size="155" required="true" uuid="0ae3bfca-4c08-4260-afe3-c1b1084c9ea2"/>
+      <field name="url_key" description="Url key of upload folder." type="string" size="255" required="true" uuid="fd82d3bb-6a9e-495c-8f34-42e8f2421da1"/>
+      <field name="path_absolute" description="Absolute folder path in system." type="text" required="true" uuid="a9536997-a308-4f9f-8be6-b92e96ad4261"/>
+      <field name="url" description="Full URL of file (if file is online)" type="text" uuid="08c3a603-d995-459b-881b-e82046c9c9d0"/>
+      <field name="type" description="i:internal,e:external" type="string" size="1" default="i" required="true" uuid="8c9896cf-6a44-4573-adb7-cd3df9dd8933"/>
+      <field name="allowed_max_size" description="Maximum size aloowed." type="decimal" size="5" uuid="b7ab033b-a6a4-4f77-90a8-5bbcb2e36367"/>
+      <field name="allowed_min_size" description="Minimum size allowed." type="decimal" size="5" uuid="4de80fa8-95ef-4c17-948d-85da82517631"/>
+      <field name="allowed_max_width" description="Max width allowed in pixels." type="integer" size="5" uuid="052d2b5f-89a7-4cac-b505-e706dda49067"/>
+      <field name="allowed_min_width" description="Min width allowed in pixels." type="integer" size="5" uuid="33743d14-9588-4405-86de-393c76a0a55d"/>
+      <field name="allowed_max_height" description="Max height allowed in pixels." type="integer" size="5" uuid="95ea1081-b86b-4cf5-acf6-995f90576fe5"/>
+      <field name="allowed_min_height" description="Min height allowed in pixels." type="integer" size="5" uuid="18d68715-6b43-4f0a-9904-d852cb650af0"/>
+      <field name="count_files" description="Count of files associated with this folder." type="integer" size="10" default="0" required="true" uuid="521ea023-a142-44b6-81a6-f24ec2973cc4"/>
+      <field name="site" description="Associated site." type="integer" size="10" required="true" uuid="6b41465b-e879-494d-9acc-048d1c000d2c"/>
+      <index name="idx_u_file_upload_folder_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_u_file_upload_folder_url_key" unique="true">
+        <index-field name="url_key"/>
+        <index-field name="site"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">file_upload_folder</attribute>
+        <attribute name="export-file-name">FileUploadFolder.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="FileUploadFolder" to="Site" caption="idx_f_file_upload_folder_site" inverse-alias="site" uuid="a50bcd82-290b-4009-b270-6e47a63148cc">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="FileLocalization" description="Holds localized details of file." uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0">
+      <field name="file" description="Localized file." type="integer" size="15" required="true" primary="true" uuid="8bdc8934-0b68-44a2-a118-7a57142a779a"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="09cc25bc-6a29-45c5-946c-a3f17fdabb0e"/>
+      <field name="title" description="Localized title." type="string" size="155" required="true" uuid="6175de78-b91d-47c4-ac72-7e312a0275cb"/>
+      <field name="description" description="File description" type="text" uuid="d78d1109-b2bb-4788-9b95-1a0af2f7a951"/>
+      <index name="idx_u_file_localization" unique="true">
+        <index-field name="file"/>
+        <index-field name="language"/>
+      </index>
+      <orm-attributes>
+        <attribute name="export-file-name">FileLocalization.php</attribute>
+        <attribute name="table">file_localization</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+      </orm-attributes>
+    </entity>
+    <association from="FileLocalization" to="File" caption="idx_f_file_localization_file" owner-alias="localizations" inverse-alias="file" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
+      <association-field from="file" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-inverse">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
+      </orm-attributes>
+    </association>
+    <association from="FileLocalization" to="Language" caption="idx_f_file_localization_language" inverse-alias="language" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-inverse">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
+      </orm-attributes>
+    </association>
+    <comment caption="FileManagementBundle Pricing" description="file: 295 TL&#10;file_upload_folder: 445 TL&#10;&#10;toplam: 740 TL" uuid="5d146fec-3f0a-436a-ba8c-5a8c5b880cb0"/>
+    <orm-attributes>
+      <attribute name="namespace">BiberLtd\Core\Bundles\FileManagementBundle\Entity</attribute>
+      <attribute name="filename-format">entity-name-only</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+    </orm-attributes>
+  </module>
+  <visual-data>
+    <comment uuid="5d146fec-3f0a-436a-ba8c-5a8c5b880cb0" bg-color="4294951085" position-x="-25" position-y="12" size-x="0" size-x2="150" size-y="-4" size-y2="79" txt-color="4278190080"/>
+    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="4291231744" size-x="26" size-x2="674" size-y="1" size-y2="299"/>
+    <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="4294967295" hdr-color="4292006610" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
+    <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="4294967295" hdr-color="4292006610" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
+    <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="4294967295" hdr-color="4292006610" position-x="204" position-y="62" size-x="0" size-x2="120" size-y="0" size-y2="199"/>
+  </visual-data>
+</skipper>
