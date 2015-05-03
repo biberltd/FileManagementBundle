@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<skipper version="3.0.0.1104" mvc="Symfony2" orm="Doctrine2">
+<skipper version="3.1.2.1193" mvc="Symfony2" orm="Doctrine2">
   <module name="FileManagementBundle" import-format="Doctrine2Php" import-path="../Entity" uuid="9d574194-22af-4673-a2ee-bb67ec7d212e">
     <entity name="File" description="Stores information of uploaded files." uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a">
       <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="eb48c822-d519-40b2-846f-f8ee5774cb6c"/>
@@ -17,18 +17,30 @@
       <field name="folder" description="Folder where file is located" type="integer" size="10" required="true" uuid="7bc3e47f-9ab1-459d-9e07-30fbb7ab9312"/>
       <field name="exif" description="If file is image, this field stores exif data." type="text" uuid="077ba7eb-6150-4a7e-9ba9-994a1efb84a6"/>
       <field name="tags" description="Comma delimited tags." type="text" uuid="e293976f-f993-4281-8021-8723c49d5925"/>
-      <index name="idx_u_file_id" unique="true">
+      <field name="date_added" description="Date when the entry is first added." type="datetime" required="true" uuid="96696d1b-92c6-4107-b24f-9e53ff996acb"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="ef855725-7264-48e0-bfe8-ec3db0ad8058"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="257827dd-bf5c-4f7b-b9d1-9abcb54cc0d8"/>
+      <index name="idxUFileId" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idx_n_file_mime_type">
+      <index name="idxNFileMimeType">
         <index-field name="mime_type"/>
       </index>
-      <index name="idx_n_file_extension">
+      <index name="idxNFileExtension">
         <index-field name="extension"/>
       </index>
-      <index name="idx_n_file_dimension">
+      <index name="idxNFileDimension">
         <index-field name="width"/>
         <index-field name="height"/>
+      </index>
+      <index name="idxNFileDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNFileDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNFileDateRemoved">
+        <index-field name="date_removed"/>
       </index>
       <orm-attributes>
         <attribute name="options">
@@ -40,14 +52,17 @@
         <attribute name="export-file-name">File.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="File" to="Site" caption="idx_f_file_site" inverse-alias="site" uuid="b210e152-462a-45f8-b840-75b0217b73c5">
+    <association from="File" to="Site" caption="idxFSiteOfFile" inverse-alias="site" many-owner="true" many-inverse="false" uuid="b210e152-462a-45f8-b840-75b0217b73c5">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="File" to="FileUploadFolder" caption="idx_f_file_folder" owner-alias="files" inverse-alias="folder" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
+    <association from="File" to="FileUploadFolder" caption="idxFFolderOfFile" owner-alias="files" inverse-alias="folder" many-owner="true" many-inverse="false" parent-required="true" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
       <association-field from="folder" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
     </association>
     <entity name="FileUploadFolder" description="Stores definitions of file upload folders and sets upload restrictions." uuid="c04c801c-5047-41eb-9209-dfd6732d5e31">
       <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="70077195-d083-4431-8742-0e911b8c90c7"/>
@@ -64,12 +79,24 @@
       <field name="allowed_min_height" description="Min height allowed in pixels." type="integer" size="5" uuid="18d68715-6b43-4f0a-9904-d852cb650af0"/>
       <field name="count_files" description="Count of files associated with this folder." type="integer" size="10" default="0" required="true" uuid="521ea023-a142-44b6-81a6-f24ec2973cc4"/>
       <field name="site" description="Associated site." type="integer" size="10" required="true" uuid="6b41465b-e879-494d-9acc-048d1c000d2c"/>
-      <index name="idx_u_file_upload_folder_id" unique="true">
+      <field name="date_added" description="Date when the entry is first added." type="datetime" required="true" uuid="6cc7dc1e-f00b-417c-b41e-2e7463c44248"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="effcaa8c-5757-4788-bbf2-7faa65994431"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="cac5838e-209c-4e45-a8c2-d5c75be0ad0d"/>
+      <index name="idxUFileUploadFolderId" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idx_u_file_upload_folder_url_key" unique="true">
+      <index name="idxUFileUploadFolderUrlKey" unique="true">
         <index-field name="url_key"/>
         <index-field name="site"/>
+      </index>
+      <index name="idxNFileUploadFolderDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNFileUploadFolderDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNFileUploadFolderDateRemoved">
+        <index-field name="date_removed"/>
       </index>
       <orm-attributes>
         <attribute name="options">
@@ -81,7 +108,7 @@
         <attribute name="export-file-name">FileUploadFolder.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="FileUploadFolder" to="Site" caption="idx_f_file_upload_folder_site" inverse-alias="site" uuid="a50bcd82-290b-4009-b270-6e47a63148cc">
+    <association from="FileUploadFolder" to="Site" caption="idxFSiteOfFileUploadFolder" inverse-alias="site" many-owner="true" many-inverse="false" parent-required="true" uuid="a50bcd82-290b-4009-b270-6e47a63148cc">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -92,7 +119,7 @@
       <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="09cc25bc-6a29-45c5-946c-a3f17fdabb0e"/>
       <field name="title" description="Localized title." type="string" size="155" required="true" uuid="6175de78-b91d-47c4-ac72-7e312a0275cb"/>
       <field name="description" description="File description" type="text" uuid="d78d1109-b2bb-4788-9b95-1a0af2f7a951"/>
-      <index name="idx_u_file_localization" unique="true">
+      <index name="idxUFileLocalization" unique="true">
         <index-field name="file"/>
         <index-field name="language"/>
       </index>
@@ -106,7 +133,7 @@
         </attribute>
       </orm-attributes>
     </entity>
-    <association from="FileLocalization" to="File" caption="idx_f_file_localization_file" owner-alias="localizations" inverse-alias="file" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
+    <association from="FileLocalization" to="File" caption="idxFLocalizedFile" owner-alias="localizations" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
       <association-field from="file" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -117,7 +144,7 @@
         </attribute>
       </orm-attributes>
     </association>
-    <association from="FileLocalization" to="Language" caption="idx_f_file_localization_language" inverse-alias="language" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
+    <association from="FileLocalization" to="Language" caption="idxFFileLocalizationLanguage" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -128,16 +155,14 @@
         </attribute>
       </orm-attributes>
     </association>
-    <comment caption="FileManagementBundle Pricing" description="file: 295 TL&#10;file_upload_folder: 445 TL&#10;&#10;toplam: 740 TL" uuid="5d146fec-3f0a-436a-ba8c-5a8c5b880cb0"/>
     <orm-attributes>
-      <attribute name="namespace">BiberLtd\Bundle\FileManagementBundle\Entity</attribute>
+      <attribute name="namespace">BiberLtd\Core\Bundles\FileManagementBundle\Entity</attribute>
       <attribute name="filename-format">entity-name-only</attribute>
       <attribute name="file-suffix">without-suffix</attribute>
     </orm-attributes>
   </module>
   <visual-data>
-    <comment uuid="5d146fec-3f0a-436a-ba8c-5a8c5b880cb0" bg-color="4294951085" position-x="-25" position-y="12" size-x="0" size-x2="150" size-y="-4" size-y2="79" txt-color="4278190080"/>
-    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="4291231744" size-x="26" size-x2="674" size-y="1" size-y2="299"/>
+    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="4291231744" size-x="26" size-x2="695" size-y="1" size-y2="380"/>
     <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="4294967295" hdr-color="4292006610" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
     <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="4294967295" hdr-color="4292006610" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="4294967295" hdr-color="4292006610" position-x="204" position-y="62" size-x="0" size-x2="120" size-y="0" size-y2="199"/>

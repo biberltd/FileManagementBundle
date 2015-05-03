@@ -4,8 +4,8 @@
  * @package		BiberLtd\Bundle\CoreBundle\FileManagementBundle
  *
  * @author		Murat Ünal
- * @version     1.0.1
- * @date        09.09.2013
+ * @version     1.0.2
+ * @date        03.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -17,14 +17,19 @@ namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="file_upload_folder",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
+ *     indexes={
+ *         @ORM\Index(name="idxNFileUploadFolderDateAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNFileUploadFolderDateUpdated", columns={"date_updated"}),
+ *         @ORM\Index(name="idxNFileUploadFolderDateRemoved", columns={"date_removed"})
+ *     },
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idx_u_file_upload_folder_id", columns={"id"}),
- *         @ORM\UniqueConstraint(name="idx_u_file_upload_folder_url_key", columns={"url_key","site"})
+ *         @ORM\UniqueConstraint(name="idxUFileUploadFolderId", columns={"id"}),
+ *         @ORM\UniqueConstraint(name="idxUFileUploadFolderUrlKey", columns={"url_key","site"})
  *     }
  * )
  */
@@ -96,6 +101,21 @@ class FileUploadFolder extends CoreEntity
      * @ORM\Column(type="integer", length=10, nullable=false)
      */
     private $count_files;
+
+	/**
+	 * @ORM\Column(type="datetime", nullable=false)
+	 */
+	public $date_added;
+
+	/**
+	 * @ORM\Column(type="datetime", nullable=false)
+	 */
+	public $date_updated;
+
+	/**
+	 * @ORM\Column(type="datetime", nullable=true)
+	 */
+	public $date_removed;
 
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File", mappedBy="folder")
@@ -673,6 +693,12 @@ class FileUploadFolder extends CoreEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.2                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
  * **************************************
  * v1.0.1                      Murat Ünal
  * 09.09.2013
