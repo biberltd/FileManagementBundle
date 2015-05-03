@@ -141,7 +141,7 @@ class FileManagementModel extends CoreModel {
 	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFileUploadFolder($folder){
-		return $this->deleteFileUploadFolders(array($file));
+		return $this->deleteFileUploadFolders(array($folder));
 	}
 	/**
 	 * @name 			deleteFileUploadFolders()
@@ -777,6 +777,7 @@ class FileManagementModel extends CoreModel {
 					case 'allowed_min_height':
 					case 'count_files':
 					case 'site':
+						$column = $this->entity['fuf']['alias'].'.'.$column;
 						break;
 				}
 				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
