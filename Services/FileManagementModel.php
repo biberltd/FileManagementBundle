@@ -51,7 +51,7 @@ class FileManagementModel extends CoreModel {
         $this->entity = array(
             'f' => array('name' => 'FileManagementBundle:File', 'alias' => 'f'),
             'fl' => array('name' => 'FileManagementBundle:FileLocalization', 'alias' => 'fl'),
-            'fup' => array('name' => 'FileManagementBundle:FileUploadFolder', 'alias' => 'fuf'),
+            'fuf' => array('name' => 'FileManagementBundle:FileUploadFolder', 'alias' => 'fuf'),
         );
     }
 
@@ -1262,7 +1262,6 @@ class FileManagementModel extends CoreModel {
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
 	}
 }
-
 /**
  * Change Log
  * **************************************
