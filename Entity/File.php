@@ -135,7 +135,7 @@ class File extends CoreLocalizableEntity
 
 	/**
 	 * @ORM\ManyToOne(
-	 *     targetEntity="BiberLtd\Core\Bundles\FileManagementBundle\Entity\FileUploadFolder",
+	 *     targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder",
 	 *     inversedBy="files"
 	 * )
 	 * @ORM\JoinColumn(name="folder", referencedColumnName="id", nullable=false, onDelete="CASCADE")
