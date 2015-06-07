@@ -63,7 +63,7 @@ class FileUploadFolder extends CoreEntity
     private $url;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"i"})
      */
     private $type;
 
@@ -98,7 +98,7 @@ class FileUploadFolder extends CoreEntity
     private $allowed_min_height;
 
     /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
      */
     private $count_files;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<skipper version="3.1.2.1193" mvc="Symfony2" orm="Doctrine2">
-  <module name="FileManagementBundle" import-format="Doctrine2Php" import-path="../Entity" uuid="9d574194-22af-4673-a2ee-bb67ec7d212e">
-    <entity name="File" description="Stores information of uploaded files." uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a">
+<skipper version="3.2.1.1226" mvc="Symfony2" orm="Doctrine2">
+  <module name="\FileManagementBundle" local-name="FileManagementBundle" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" local-namespace="BiberLtd\Bundle\FileManagementBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="9d574194-22af-4673-a2ee-bb67ec7d212e">
+    <entity name="\BiberLtd\Bundle\FileManagementBundle\Entity\File" local-name="File" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" description="Stores information of uploaded files." uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a">
       <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="eb48c822-d519-40b2-846f-f8ee5774cb6c"/>
       <field name="name" description="File name." type="string" size="165" required="true" uuid="850075c7-b27a-4ac6-9da5-9d6923873a7a"/>
       <field name="url_key" description="Url key of file." type="string" size="255" required="true" uuid="4b9aa182-f322-42a8-9435-73bdcf173806"/>
@@ -52,19 +52,19 @@
         <attribute name="export-file-name">File.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="File" to="Site" caption="idxFSiteOfFile" inverse-alias="site" many-owner="true" many-inverse="false" uuid="b210e152-462a-45f8-b840-75b0217b73c5">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\File" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfFile" inverse-alias="site" many-owner="true" many-inverse="false" uuid="b210e152-462a-45f8-b840-75b0217b73c5">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="File" to="FileUploadFolder" caption="idxFFolderOfFile" owner-alias="files" inverse-alias="folder" many-owner="true" many-inverse="false" parent-required="true" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\File" to="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" caption="idxFFolderOfFile" owner-alias="files" inverse-alias="folder" many-owner="true" many-inverse="false" parent-required="true" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
       <association-field from="folder" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="FileUploadFolder" description="Stores definitions of file upload folders and sets upload restrictions." uuid="c04c801c-5047-41eb-9209-dfd6732d5e31">
+    <entity name="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" local-name="FileUploadFolder" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" description="Stores definitions of file upload folders and sets upload restrictions." uuid="c04c801c-5047-41eb-9209-dfd6732d5e31">
       <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="70077195-d083-4431-8742-0e911b8c90c7"/>
       <field name="name" description="User given folder name." type="string" size="155" required="true" uuid="0ae3bfca-4c08-4260-afe3-c1b1084c9ea2"/>
       <field name="url_key" description="Url key of upload folder." type="string" size="255" required="true" uuid="fd82d3bb-6a9e-495c-8f34-42e8f2421da1"/>
@@ -108,13 +108,13 @@
         <attribute name="export-file-name">FileUploadFolder.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="FileUploadFolder" to="Site" caption="idxFSiteOfFileUploadFolder" inverse-alias="site" many-owner="true" many-inverse="false" parent-required="true" uuid="a50bcd82-290b-4009-b270-6e47a63148cc">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfFileUploadFolder" inverse-alias="site" many-owner="true" many-inverse="false" parent-required="true" uuid="a50bcd82-290b-4009-b270-6e47a63148cc">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="FileLocalization" description="Holds localized details of file." uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0">
+    <entity name="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" local-name="FileLocalization" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" description="Holds localized details of file." uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0">
       <field name="file" description="Localized file." type="integer" size="15" required="true" primary="true" uuid="8bdc8934-0b68-44a2-a118-7a57142a779a"/>
       <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="09cc25bc-6a29-45c5-946c-a3f17fdabb0e"/>
       <field name="title" description="Localized title." type="string" size="155" required="true" uuid="6175de78-b91d-47c4-ac72-7e312a0275cb"/>
@@ -133,7 +133,7 @@
         </attribute>
       </orm-attributes>
     </entity>
-    <association from="FileLocalization" to="File" caption="idxFLocalizedFile" owner-alias="localizations" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFLocalizedFile" owner-alias="localizations" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
       <association-field from="file" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -144,7 +144,7 @@
         </attribute>
       </orm-attributes>
     </association>
-    <association from="FileLocalization" to="Language" caption="idxFFileLocalizationLanguage" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFFileLocalizationLanguage" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -156,15 +156,15 @@
       </orm-attributes>
     </association>
     <orm-attributes>
-      <attribute name="namespace">BiberLtd\Core\Bundles\FileManagementBundle\Entity</attribute>
+      <attribute name="namespace">BiberLtd\Bundle\FileManagementBundle\Entity</attribute>
       <attribute name="filename-format">entity-name-only</attribute>
       <attribute name="file-suffix">without-suffix</attribute>
     </orm-attributes>
   </module>
   <visual-data>
-    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="4291231744" size-x="26" size-x2="695" size-y="1" size-y2="380"/>
-    <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="4294967295" hdr-color="4292006610" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
-    <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="4294967295" hdr-color="4292006610" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
-    <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="4294967295" hdr-color="4292006610" position-x="204" position-y="62" size-x="0" size-x2="120" size-y="0" size-y2="199"/>
+    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="#C70000" size-x="26" size-x2="695" size-y="1" size-y2="487"/>
+    <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
+    <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
+    <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="197" position-y="99" size-x="0" size-x2="130" size-y="0" size-y2="269"/>
   </visual-data>
 </skipper>

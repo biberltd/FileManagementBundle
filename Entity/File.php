@@ -64,7 +64,7 @@ class File extends CoreLocalizableEntity
     private $source_preview;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"i"})
      */
     private $type;
 
@@ -79,7 +79,7 @@ class File extends CoreLocalizableEntity
     private $height;
 
     /** 
-     * @ORM\Column(type="decimal", unique=true, length=5, nullable=false)
+     * @ORM\Column(type="decimal", unique=true, length=5, nullable=false, options={"default":0})
      */
     private $size;
 
@@ -134,10 +134,7 @@ class File extends CoreLocalizableEntity
     private $site;
 
 	/**
-	 * @ORM\ManyToOne(
-	 *     targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder",
-	 *     inversedBy="files"
-	 * )
+	 * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder", inversedBy="files")
 	 * @ORM\JoinColumn(name="folder", referencedColumnName="id", nullable=false, onDelete="CASCADE")
 	 */
     private $folder;
