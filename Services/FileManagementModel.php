@@ -12,8 +12,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.6
- * @date        25.05.2015
+ * @version     1.0.7
+ * @date        12.06.2015
  *
  */
 
@@ -258,7 +258,7 @@ class FileManagementModel extends CoreModel {
      * @name            getFile()
      *
      * @since			1.0.0
-     * @version         1.0.5
+     * @version         1.0.4
 	 *
      * @author          Can Berkol
      * @author          Said Imamoglu
@@ -281,6 +281,12 @@ class FileManagementModel extends CoreModel {
 				break;
 			case is_string($file):
 				$result = $this->em->getRepository($this->entity['f']['name'])->findOneBy(array('url_key' => $file));
+				if(is_null($result)){
+					$result = $this->em->getRepository($this->entity['f']['name'])->findOneBy(array('source_original' => $file));
+					if(is_null($result)){
+						$result = $this->em->getRepository($this->entity['f']['name'])->findOneBy(array('source_preview' => $file));
+					}
+				}
 				break;
 		}
 		if(is_null($result)){
@@ -437,7 +443,7 @@ class FileManagementModel extends CoreModel {
      * @name            insertFileLocalizations()
      *
      * @since           1.0.4
-     * @version         1.0.5
+     * @version         1.0.7
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -460,34 +466,33 @@ class FileManagementModel extends CoreModel {
 				$insertedItems[] = $entity;
 				$countInserts++;
 			}
-			else if(is_object($data)){
-				$entity = new BundleEntity\FileLocalization();
-				foreach($data as $column => $value){
-					$set = 'set'.$this->translateColumnName($column);
-					switch($column){
-						case 'language':
-							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-							$response = $lModel->getLanguage($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						case 'file':
-							$response = $this->getFile($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						default:
-							$entity->$set($value);
-							break;
+			else{
+				$file = $data['entity'];
+				foreach($data['localizations'] as $locale => $translation){
+					$entity = new BundleEntity\FileLocalization();
+					$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+					$response = $lModel->getLanguage($locale);
+					if($response->error->exist){
+						return $response;
 					}
+					$entity->setLanguage($response->result->set);
+					unset($response);
+					$entity->setFile($file);
+					foreach($translation as $column => $value){
+						$set = 'set'.$this->translateColumnName($column);
+						switch($column){
+							default:
+								if(is_object($value) || is_array($value)){
+									$value = json_encode($value);
+								}
+								$entity->$set($value);
+								break;
+						}
+					}
+					$this->em->persist($entity);
+					$insertedItems[] = $entity;
+					$countInserts++;
 				}
-				$this->em->persist($entity);
-				$insertedItems[] = $entity;
-				$countInserts++;
 			}
 		}
 		if($countInserts > 0){
@@ -1265,6 +1270,13 @@ class FileManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.7                      12.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: insertFileLocalizations() rewritten.
+ * CR :: getFile() now returns files based on source_original and source_preview keys.
+ *
  * **************************************
  * v1.0.6                      25.05.2015
  * Can Berkol
