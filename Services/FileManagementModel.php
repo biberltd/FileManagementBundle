@@ -12,8 +12,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.7
- * @date        12.06.2015
+ * @version     1.0.8
+ * @date        30.06.2015
  *
  */
 
@@ -188,8 +188,9 @@ class FileManagementModel extends CoreModel {
 	 * @name 			doesFileExist()
 	 *
 	 * @since			1.0.0
-	 * @version         1.0.5
+	 * @version         1.0.8
 	 * @author          Can Berkol
+	 * @author          Said İmamoğlu
 	 *
 	 * @use             $this->getSite()
 	 *
@@ -204,7 +205,7 @@ class FileManagementModel extends CoreModel {
 
 		$response = $this->getFile($file);
 
-		if ($response->error->exists) {
+		if ($response->error->exist) {
 			if($bypass){
 				return $exist;
 			}
@@ -217,7 +218,7 @@ class FileManagementModel extends CoreModel {
 		if ($bypass) {
 			return $exist;
 		}
-		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($response->result->set, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
 	/**
 	 * @name 			doesFileUploadFolderExist()
@@ -1270,6 +1271,11 @@ class FileManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.8                      30.06.2015
+ * Said İmamoğlu
+ * **************************************
+ * BF :: doesFileExist() now returns file entity if exist.
  * **************************************
  * v1.0.7                      12.06.2015
  * Can Berkol
