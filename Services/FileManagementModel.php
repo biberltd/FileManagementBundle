@@ -1,9 +1,6 @@
 <?php
-
 /**
- * FileManagementModel Class
- *
- * This class acts as a database proxy model for FileManagementModelBundle functionalities.
+ * FileManagementModel
  *
  * @vendor      BiberLtd
  * @package		Core\Bundles\FileManagementBundle
@@ -15,28 +12,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.4
- * @date        17.07.2014
- *
- * =============================================================================================================
- * !! INSTRUCTIONS ON IMPORTANT ASPECTS OF MODEL METHODS !!!
- *
- * Each model function must return a $response ARRAY.
- * The array must contain the following keys and corresponding values.
- *
- * $response = array(
- *              'result'    =>   An array that contains the following keys:
- *                               'set'         Actual result set returned from ORM or null
- *                               'total_rows'  0 or number of total rows
- *                               'last_insert_id' The id of the item that is added last (if insert action)
- *              'error'     =>   true if there is an error; false if there is none.
- *              'code'      =>   null or a semantic and short English string that defines the error concanated
- *                               with dots, prefixed with err and the initials of the name of model class.
- *                               EXAMPLE: err.amm.action.not.found success messages have a prefix called scc..
- *
- *                               NOTE: DO NOT FORGET TO ADD AN ENTRY FOR ERROR CODE IN BUNDLE'S
- *                               RESOURCES/TRANSLATIONS FOLDER FOR EACH LANGUAGE.
- * =============================================================================================================   
+ * @version     1.0.7
+ * @date        12.06.2015
  *
  */
 
@@ -50,6 +27,7 @@ use BiberLtd\Bundle\FileManagementBundle\Entity as BundleEntity;
 use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
 /** Core Service */
 use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
+use BiberLtd\Bundle\CoreBundle\Responses\ModelResponse;
 use BiberLtd\Bundle\CoreBundle\Exceptions as CoreExceptions;
 
 class FileManagementModel extends CoreModel {
@@ -57,38 +35,28 @@ class FileManagementModel extends CoreModel {
      * @name            __construct()
      *                  Constructor.
      *
+     * @author          Can Berkol
      * @author          Said Imamoglu
      *
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
      *
      * @param           object          $kernel
-     * @param           string          $db_connection  Database connection key as set in app/config.yml
+     * @param           string          $dbConnection  Database connection key as set in app/config.yml
      * @param           string          $orm            ORM that is used.
      */
+    public function __construct($kernel, $dbConnection = 'default', $orm = 'doctrine') {
+        parent::__construct($kernel, $dbConnection, $orm);
 
-    /** @var $by_opitons handles by options */
-    public $by_opts = array('entity', 'id', 'code', 'url_key', 'post', 'name');
-
-    /* @var $type must be [i=>image,s=>software,v=>video,f=>flash,d=>document,p=>package] */
-    public $type_opts = array('i', 'a', 'v', 'f', 'd', 'p', 's');
-
-    public function __construct($kernel, $db_connection = 'default', $orm = 'doctrine') {
-        parent::__construct($kernel, $db_connection, $orm);
-
-        /**
-         * Register entity names for easy reference.
-         */
         $this->entity = array(
-            'file' => array('name' => 'FileManagementBundle:File', 'alias' => 'f'),
-            'file_localization' => array('name' => 'FileManagementBundle:FileLocalization', 'alias' => 'fl'),
-            'file_upload_folder' => array('name' => 'FileManagementBundle:FileUploadFolder', 'alias' => 'fuf'),
+            'f' => array('name' => 'FileManagementBundle:File', 'alias' => 'f'),
+            'fl' => array('name' => 'FileManagementBundle:FileLocalization', 'alias' => 'fl'),
+            'fuf' => array('name' => 'FileManagementBundle:FileUploadFolder', 'alias' => 'fuf'),
         );
     }
 
     /**
      * @name            __destruct()
-     *                  Destructor.
      *
      * @author          Said Imamoglu
      *
@@ -102,204 +70,273 @@ class FileManagementModel extends CoreModel {
         }
     }
 
-    /**
-     * @name 	        deleteFile()
-     *                  Delete files with a given id or entity.
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     *
-     * @use             $this->deleteFiles()
-     *
-     * @param           array           $data           Collection consists one of the following: 'entity' or entity 'id'
-     *                                                  Contains an array with two keys: file, and sortorder
-     *
-     * @return          array           $response
-     */
-    public function deleteFile($data) {
-        return $this->deleteFiles(array($data));
-    }
+	/**
+	 * @name 			deleteFile()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->deleteFiles()
+	 *
+	 * @param           mixed           $file
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteFile($file){
+		return $this->deleteFiles(array($file));
+	}
+	/**
+	 * @name 			deleteFiles()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array           $collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteFiles($collection) {
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countDeleted = 0;
+		foreach($collection as $entry){
+			if($entry instanceof BundleEntity\File){
+				$this->em->remove($entry);
+				$countDeleted++;
+			}
+			else{
+				$response = $this->getFile($entry);
+				if(!$response->error->exists){
+					$entry = $response->result->set;
+					$this->em->remove($entry);
+					$countDeleted++;
+				}
+			}
+		}
+		if($countDeleted < 0){
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		}
+		$this->em->flush();
 
-    /**
-     * @name 	        deleteFiles()
-     *                  Delete files with a given id or entity.
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Can Berkol
-     *
-     * @use             $this->deleteFiles()
-     *
-     * @param           array           $collection           Collection consists one of the following: 'entity' or entity 'id'
-     *                                                        Contains an array with two keys: file, and sortorder
-     *
-     * @return          array           $response
-     */
-    public function deleteFiles($collection) {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameterException', '', 'err.invalid.parameter.value');
-        }
-        /** If COLLECTION is ENTITYs then USE ENTITY MANAGER */
-        $removeCount = 0;
-        foreach($collection as $entity){
-            if(!$entity instanceof BundleEntity\File){
-                if(is_numeric($entity)){
-                    $response = $this->getFile($entity, 'id');
-                    if($response['error']){
-                        return $this->createException('EntityDoesNotExist', 'File', 'err.invalid.entity.file');
-                    }
-                    $entity = $response['result']['set'];
-                    unset($response);
-                }
-                else{
-                    return $this->createException('InvalidParameterException', 'collection', 'err.invalid.parameter.exception');
-                }
-            }
-            $this->em->remove($entity);
-            $removeCount++;
-        }
-        if ($removeCount > 0) {
-            $this->em->flush();
-        };
-        $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => null,
-                    'total_rows' => $removeCount,
-                    'last_insert_id' => null,
-                ),
-                'error' => false,
-                'code' => 'scc.db.deleted',
-            );
-        return $this->response;
-    }
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+	}
+	/**
+	 * @name 			deleteFileUploadFolder()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->deleteFieUploadFolders()
+	 *
+	 * @param           mixed           $folder
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteFileUploadFolder($folder){
+		return $this->deleteFileUploadFolders(array($folder));
+	}
+	/**
+	 * @name 			deleteFileUploadFolders()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array           $collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteFileUploadFolders($collection) {
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countDeleted = 0;
+		foreach($collection as $entry){
+			if($entry instanceof BundleEntity\FileUploadFolder){
+				$this->em->remove($entry);
+				$countDeleted++;
+			}
+			else{
+				$response = $this->getFileUploadFolder($entry);
+				if(!$response->error->exists){
+					$entry = $response->result->set;
+					$this->em->remove($entry);
+					$countDeleted++;
+				}
+			}
+		}
+		if($countDeleted < 0){
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		}
+		$this->em->flush();
 
-    /**
-     * @name 	doesFileExist()
-     *  	Checks if record exist in db.
-     *
-     * @since		1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     *
-     * @use             $this->resetResponse()
-     * @use             $this->getFile()
-     *
-     * @param           array           $file   File collection of entities or post data.
-     * @param           string          $by     Entity, post
-     *
-     * @return          array           $response
-     */
-    public function doesFileExist($file, $by = 'entity') {
-        $this->resetResponse();
-        $exist = false;
-        $code = 'err.db.record.notfound';
-        $error = false;
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+	}
+	/**
+	 * @name 			doesFileExist()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->getSite()
+	 *
+	 * @param           mixed           $file
+	 * @param           bool            $bypass         If set to true does not return response but only the result.
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function doesFileExist($file, $bypass = false) {
+		$timeStamp = time();
+		$exist = false;
 
-        $response = $this->getFile($file, $by);
+		$response = $this->getFile($file);
 
-        if (!$response['error']) {
-            $exist = true;
-            $code = 'scc.db.record.found';
-        } else {
-            $error = true;
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $exist,
-                'total_rows' => $response['result']['total_rows'],
-                'last_insert_id' => null,
-            ),
-            'error' => $error,
-            'code' => $code,
-        );
-        return $this->response;
-    }
+		if ($response->error->exists) {
+			if($bypass){
+				return $exist;
+			}
+			$response->result->set = false;
+			return $response;
+		}
 
+		$exist = true;
+
+		if ($bypass) {
+			return $exist;
+		}
+		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name 			doesFileUploadFolderExist()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->getSite()
+	 *
+	 * @param           mixed           $folder
+	 * @param           bool            $bypass         If set to true does not return response but only the result.
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function doesFileUploadFolderExist($folder, $bypass = false) {
+		$timeStamp = time();
+		$exist = false;
+
+		$response = $this->getFileUploadFolder($folder);
+
+		if ($response->error->exists) {
+			if($bypass){
+				return $exist;
+			}
+			$response->result->set = false;
+			return $response;
+		}
+
+		$exist = true;
+
+		if ($bypass) {
+			return $exist;
+		}
+		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
     /**
      * @name            getFile()
-     *  		Returns details of a file.
      *
-     * @since		1.0.0
-     * @version         1.0.0
+     * @since			1.0.0
+     * @version         1.0.4
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
      *
      * @use             $this->createException()
-     * @use             $this->listFiles()
      *
-     * @param           mixed           $file               id
-     * @param           string          $by                 entity, id
+     * @param           mixed           $file
      *
-     * @return          mixed           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getFile($file, $by = 'id') {
-        $this->resetResponse();
-        if (!is_object($file) && !is_numeric($file) && !is_string($file)) {
-            return $this->createException('InvalidParameterException', 'object,numeric or string', 'err.invalid.parameter.file');
-        }
-        if ($by == 'entity') {
-            if (is_object($file)) {
-                if (!$file instanceof BundleEntity\File) {
-                    return $this->createException('InvalidEntityException', 'BundleEntity\File', 'err.invalid.parameter.file');
-                }
-                /**
-                 * Prepare and Return Response
-                 */
-                $this->response = array(
-	                'rowCount' => $this->response['rowCount'],
-                    'result' => array(
-                        'set' => $file,
-                        'total_rows' => 1,
-                        'last_insert_id' => null,
-                    ),
-                    'error' => false,
-                    'code' => 'scc.entity.found'
-                );
-            } else {
-                return $this->createException('InvalidParameterException', 'object,numeric or string', 'err.invalid.parameter.file');
-            }
-        } elseif ($by == 'id') {
-            $filter[] = array(
-                'glue' => '',
-                'condition' => array('column' => $this->entity['file']['alias'] . '.' . $by, 'comparison' => '=', 'value' => $file)
-            );
-            $response = $this->listFiles($filter, null);
-            if ($response['error']) {
-                return $response;
-            }
-            $collection = $response['result']['set'];
+	public function getFile($file) {
+		$timeStamp = time();
+		if($file instanceof BundleEntity\File){
+			return new ModelResponse($file, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		}
+		$result = null;
+		switch($file){
+			case is_numeric($file):
+				$result = $this->em->getRepository($this->entity['f']['name'])->findOneBy(array('id' => $file));
+				break;
+			case is_string($file):
+				$result = $this->em->getRepository($this->entity['f']['name'])->findOneBy(array('url_key' => $file));
+				if(is_null($result)){
+					$result = $this->em->getRepository($this->entity['f']['name'])->findOneBy(array('source_original' => $file));
+					if(is_null($result)){
+						$result = $this->em->getRepository($this->entity['f']['name'])->findOneBy(array('source_preview' => $file));
+					}
+				}
+				break;
+		}
+		if(is_null($result)){
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+		}
 
-            /**
-             * Prepare and Return Response
-             */
-            $this->response = array(
-	        'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => $collection[0],
-                    'total_rows' => count($collection),
-                    'last_insert_id' => null,
-                ),
-                'error' => false,
-                'code' => 'scc.entity.found',
-            );
-        }
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name            getFileUploadFolder()
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 * @author          Said Imamoglu
+	 *
+	 * @use             $this->createException()
+	 *
+	 *
+	 * @param           mixed   $folder
+	 *
+	 * @return          array   $response
+	 *
+	 */
+	public function getFileUploadFolder($folder) {
+		$timeStamp = time();
+		if($folder instanceof BundleEntity\FileUploadFolder){
+			return new ModelResponse($folder, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		}
+		$result = null;
+		switch($folder){
+			case is_numeric($folder):
+				$result = $this->em->getRepository($this->entity['fuf']['name'])->findOneBy(array('id' => $folder));
+				break;
+			case is_string($folder):
+				$result = $this->em->getRepository($this->entity['fuf']['name'])->findOneBy(array('url_key' => $folder));
+				break;
+		}
+		if(is_null($result)){
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+		}
 
-        return $this->response;
-    }
-
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
     /**
      * @name 		    insertFile()
-     *  		        Inserts one or more products into database.
      *
      * @since		    1.0.1
-     * @version         1.0.2
+     * @version         1.0.5
      * @author          Said Imamoglu
      * @author          Can Berkol
      *
@@ -307,382 +344,354 @@ class FileManagementModel extends CoreModel {
      *
      * @param           array           $file        Collection of entities or post data.
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertFile($file) {
         return $this->insertFiles(array($file));
     }
+	/**
+	 * @name            insertFiles()
+	 *
+	 * @since           1.0.1
+	 * @version         1.0.5
+	 * @author          Said Imamoglu
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array           $collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function insertFiles($collection)	{
+		$timeStamp = time();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countInserts = 0;
+		$countLocalizations = 0;
+		$insertedItems = array();
+		$localizations = array();
+		foreach ($collection as $data) {
+			if ($data instanceof BundleEntity\File) {
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else if (is_object($data)) {
+				$entity = new BundleEntity\File;
+				if(!property_exists($data, 'site')){
+					$data->site = 1;
+				}
+				if(!property_exists($data, 'folder')){
+					$data->folder = 1;
+				}
+				foreach ($data as $column => $value) {
+					$localeSet = false;
+					$set = 'set' . $this->translateColumnName($column);
+					switch ($column) {
+						case 'local':
+							$localizations[$countInserts]['localizations'] = $value;
+							$localeSet = true;
+							$countLocalizations++;
+							break;
+						case 'site':
+							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+							$response = $sModel->getSite($value);
+							if(!$response->error->exist){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $sModel);
+							break;
+						case 'folder':
+							$response = $this->getFileUploadFolder($value);
+							if(!$response->error->exist){
+								$entity->$set($response->result->set);
+							}
+							unset($response);
+							break;
+						default:
+							$entity->$set($value);
+							break;
+					}
+					if ($localeSet) {
+						$localizations[$countInserts]['entity'] = $entity;
+					}
+				}
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+
+				$countInserts++;
+			}
+		}
+		if ($countInserts > 0) {
+			$this->em->flush();
+		}
+		/** Now handle localizations */
+		if ($countInserts > 0 && $countLocalizations > 0) {
+			$response = $this->insertMemberLocalizations($localizations);
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
     /**
-     * @name            insertFileLocalizations ()
-     *                  Inserts one or more product localizations into database.
+     * @name            insertFileLocalizations()
      *
      * @since           1.0.4
-     * @version         1.0.4
+     * @version         1.0.7
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
      * @param           array           $collection Collection of entities or post data.
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertFileLocalizations($collection){
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countInserts = 0;
-        $insertedItems = array();
-        foreach ($collection as $item) {
-            if ($item instanceof BundleEntity\FileLocalization) {
-                $entity = $item;
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
-                $countInserts++;
-            } else {
-                foreach ($item['localizations'] as $language => $data) {
-                    $entity = new BundleEntity\FileLocalization;
-                    $entity->setFile($item['entity']);
-                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                    $response = $mlsModel->getLanguage($language, 'iso_code');
-                    if (!$response['error']) {
-                        $entity->setLanguage($response['result']['set']);
-                    } else {
-                        break 1;
-                    }
-                    foreach ($data as $column => $value) {
-                        $set = 'set' . $this->translateColumnName($column);
-                        $entity->$set($value);
-                    }
-                    $this->em->persist($entity);
-                }
-                $insertedItems[] = $entity;
-                $countInserts++;
-            }
-        }
-        if ($countInserts > 0) {
-            $this->em->flush();
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => -1,
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
-    }
-    /**
-     * @name            insertFiles()
-     *  		        Inserts one or more files into database.
-     *
-     * @since           1.0.1
-     * @version         1.0.2
-     * @author          Said Imamoglu
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->doesProductExist()
-     * @use             BiberLtd\Bundle\FileManagementBundle\Entity\File()
-     * @use             BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder()
-     *
-     * @throws          InvalidParameterException
-     * @throws          InvalidMethodException
-     *
-     * @param           array           $collection        Collection of entities or post data.
-     *
-     * @return          array           $response
-     */
-    public function insertFiles($collection) {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameterException', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countInserts = 0;
-        $countLocalizations = 0;
-        $insertedItems = array();
-        foreach($collection as $data){
-            if($data instanceof BundleEntity\File){
-                $entity = $data;
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
-                $countInserts++;
-            }
-            else if(is_object($data) || is_array($data)){
-                if(is_array($data)){
-                    $obj = new \stdClass();
-                    foreach($data as $key => $value){
-                        $obj->$key = $value;
-                    }
-                    $data = $obj;
-                    unset($obj);
-                }
-                $localizations = array();
-                $entity = new BundleEntity\File;
-                if(!property_exists($data, 'site')){
-                    $data->site = 1;
-                }
-                if(!property_exists($data, 'folder')){
-                    $data->folder = 1;
-                }
-                $localeSet = false;
-                foreach($data as $column => $value){
-                    $set = 'set'.$this->translateColumnName($column);
-                    switch($column){
-                        case 'local':
-                            $localizations[$countInserts]['localizations'] = $value;
-                            $localeSet = true;
-                            $countLocalizations++;
-                            break;
-                        case 'site':
-                            $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-                            $response = $sModel->getSite($value, 'id');
-                            if(!$response['error']){
-                                $entity->$set($response['result']['set']);
-                            }
-                            else{
-                                new CoreExceptions\SiteDoesNotExistException($this->kernel, $value);
-                            }
-                            unset($response, $sModel);
-                            break;
-                        case 'folder':
-                            $response = $this->getFileUploadFolder($value, 'id');
-                            if(!$response['error']){
-                                $entity->$set($response['result']['set']);
-                            }
-                            else{
-                                new CoreExceptions\EntityDoesNotExistException($this->kernel, $value);
-                            }
-                            unset($response);
-                            break;
-                        default:
-                            $entity->$set($value);
-                            break;
-                    }
-                    if ($localeSet) {
-                        $localizations[$countInserts]['entity'] = $entity;
-                    }
-                }
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
-
-                $countInserts++;
-            }
-            else{
-                new CoreExceptions\InvalidDataException($this->kernel);
-            }
-        }
-        if($countInserts > 0){
-            $this->em->flush();
-        }
-        /** Now handle localizations */
-        if ($countInserts > 0 && $countLocalizations > 0) {
-            $this->insertFileLocalizations($localizations);
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => $entity->getId(),
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
-    }
+	public function insertFileLocalizations($collection) {
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countInserts = 0;
+		$insertedItems = array();
+		foreach($collection as $data){
+			if($data instanceof BundleEntity\FileLocalization){
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else{
+				$file = $data['entity'];
+				foreach($data['localizations'] as $locale => $translation){
+					$entity = new BundleEntity\FileLocalization();
+					$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+					$response = $lModel->getLanguage($locale);
+					if($response->error->exist){
+						return $response;
+					}
+					$entity->setLanguage($response->result->set);
+					unset($response);
+					$entity->setFile($file);
+					foreach($translation as $column => $value){
+						$set = 'set'.$this->translateColumnName($column);
+						switch($column){
+							default:
+								if(is_object($value) || is_array($value)){
+									$value = json_encode($value);
+								}
+								$entity->$set($value);
+								break;
+						}
+					}
+					$this->em->persist($entity);
+					$insertedItems[] = $entity;
+					$countInserts++;
+				}
+			}
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
+	/**
+	 * @name 			insertFileUploadFolder()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->insertFileUploadFolders()
+	 *
+	 * @param           mixed           $folder
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function insertFileUploadFolder($folder){
+		return $this->insertFileUploadFolders(array($folder));
+	}
+	/**
+	 * @name 			insertFileUploadFolders()
+	 *
+	 * @since			1.0.0
+	 * @version         1.0.5
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array           $collection      Collection of Site entities or array of site detais array.
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function insertFileUploadFolders($collection) {
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countInserts = 0;
+		$insertedItems = array();
+		foreach($collection as $data){
+			if($data instanceof BundleEntity\FileUploadFolder){
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else if(is_object($data)){
+				$entity = new BundleEntity\FileUploadFolder();
+				foreach($data as $column => $value){
+					$set = 'set'.$this->translateColumnName($column);
+					switch($column){
+						case 'site':
+							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+							$response = $sModel->getSite($value);
+							if(!$response->error->exists){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $sModel);
+							break;
+						default:
+							$entity->$set($value);
+							break;
+					}
+				}
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
 
     /**
      * @name            listFiles()
-     *                  List files of a given collection.
      *
      * @since		    1.0.0
-     * @version         1.0.4
+     * @version         1.0.5
      *
      * @author          Can Berkol
      * @author          Said Imamoglu
      *
-     * @use             $this->resetResponse()
      * @use             $this->createException()
-     * @use             $this->prepare_where()
-     * @use             $this->createQuery()
-     * @use             $this->getResult()
-     * 
-     * @throws          InvalidSortOrderException
-     * @throws          InvalidLimitException
-     * 
      *
-     * @param           mixed           $filter                Multi dimensional array
-     * @param           array           $sortorder              Array
-     *                                                              'column'    => 'asc|desc'
+     * @param           mixed           $filter
+     * @param           array           $sortOrder
      * @param           array           $limit
-     *                                      start
-     *                                      count
-     * @param           string           $query_str             If a custom query string needs to be defined.
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listFiles($filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        $this->resetResponse();
-        if (!is_array($sortorder) && !is_null($sortorder)) {
-            return $this->createException('InvalidSortOrderException', '', 'err.invalid.parameter.sortorder');
-        }
+	public function listFiles($filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		if(!is_array($sortOrder) && !is_null($sortOrder)){
+			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
+		}
+		$oStr = $wStr = $gStr = $fStr = '';
 
-        /**
-         * Add filter check to below to set join_needed to true
-         */
-        $order_str = '';
-        $where_str = '';
-        $group_str = '';
-        $filter_str = '';
+		$qStr = 'SELECT '.$this->entity['f']['alias'].', '.$this->entity['f']['alias']
+			.' FROM '.$this->entity['fl']['name'].' '.$this->entity['fl']['alias']
+			.' JOIN '.$this->entity['fl']['alias'].'.member '.$this->entity['f']['alias'];
 
-        /**
-         * Start creating the query
-         *
-         * Note that if no custom select query is provided we will use the below query as a start
-         */
+		if(!is_null($sortOrder)){
+			foreach($sortOrder as $column => $direction){
+				switch($column){
+					case 'id':
+					case 'name':
+					case 'url_key':
+					case 'width':
+					case 'height':
+					case 'size':
+					case 'mime_type':
+					case 'extension':
+					case 'date_added':
+					case 'date_updated':
+					case 'date_removed':
+						$column = $this->entity['f']['alias'].'.'.$column;
+						break;
+					case 'title':
+						$column = $this->entity['fl']['alias'].'.'.$column;
+						break;
+				}
+				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
+			}
+			$oStr = rtrim($oStr, ', ');
+			$oStr = ' ORDER BY '.$oStr.' ';
+		}
 
-        /**
-         * Prepare ORDER BY section of query
-         */
-        $localizedQuery = false;
-        if (!is_null($sortorder)) {
-            foreach ($sortorder as $column => $direction) {
-                switch ($column) {
-                    case 'id':
-                    case 'name':
-                    case 'url_key':
-                    case 'source_original':
-                    case 'source_preview':
-                    case 'type':
-                    case 'width':
-                    case 'height':
-                    case 'size':
-                    case 'folder':
-                    case 'mime_type':
-                    case 'extension':
-                    case 'site':
-                        $column = $this->entity['file']['alias'].'.'.$column;
-                        break;
-                    case 'title':
-                    case 'description':
-                        $localizedQuery = true;
-                        $column = $this->entity['file_localization']['alias'].'.'.$column;
-                        break;
-                }
-                $order_str .= ' ' . $column . ' ' . strtoupper($direction) . ', ';
-            }
-            $order_str = rtrim($order_str, ', ');
-            $order_str = ' ORDER BY ' . $order_str . ' ';
-        }
-        if($localizedQuery){
-            if (is_null($query_str)) {
-                $query_str = 'SELECT '.$this->entity['file_localization']['alias']
-                    .' FROM '.$this->entity['file_localization']['name'].' '.$this->entity['file_localization']['alias']
-                    .' JOIN '.$this->entity['file_localization']['alias'].'.file '.$this->entity['file']['alias'];
-            }
-        }
-        else{
-            if (is_null($query_str)) {
-                $query_str = 'SELECT '.$this->entity['file']['alias']
-                    .' FROM '.$this->entity['file']['name'].' '.$this->entity['file']['alias'];
-            }
-        }
+		if(!is_null($filter)){
+			$fStr = $this->prepareWhere($filter);
+			$wStr .= ' WHERE '.$fStr;
+		}
 
-        /**
-         * Prepare WHERE section of query
-         */
-        if (!is_null($filter)) {
-            $filter_str = $this->prepare_where($filter);
-            $where_str = ' WHERE ' . $filter_str;
-        }
+		$qStr .= $wStr.$gStr.$oStr;
+		$q = $this->em->createQuery($qStr);
+		$q = $this->addLimit($q, $limit);
 
-        $query_str .= $where_str . $group_str . $order_str;
+		$result = $q->getResult();
 
-        $query = $this->em->createQuery($query_str);
-
-        /**
-         * Prepare LIMIT section of query
-         */
-
-        if (!is_null($limit) && is_numeric($limit)) {
-            if (isset($limit['start']) && isset($limit['count'])) {
-                $query = $this->addLimit($query, $limit);
-            } else {
-                $this->createException('InvalidLimitException', '', 'err.invalid.limit');
-            }
-        }
-        /**
-         * Prepare and Return Response
-         */
-        $result = $query->getResult();
-        $entries = array();
-        $unique = array();
-        if($localizedQuery){
-            foreach ($result as $entry) {
-                $id = $entry->getFile()->getId();
-                if (!isset($unique[$id])) {
-                    $entries[] = $entry->getFile();
-                    $unique[$id] = $entry->getFile();
-                }
-            }
-        }
-        else{
-            $entries = $result;
-        }
-        $total_rows = count($entries);
-        if ($total_rows < 1) {
-            $this->response['error'] = true;
-            $this->response['code'] = 'err.db.entry.notexist';
-            return $this->response;
-        }
-        $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $entries,
-                'total_rows' => $total_rows,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-
-        return $this->response;
-    }
+		$entities = array();
+		foreach($result as $entry){
+			$id = $entry->getFile()->getId();
+			if(!isset($unique[$id])){
+				$entities[] = $entry->getFile();
+			}
+		}
+		$totalRows = count($entities);
+		if ($totalRows < 1) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
 
     /**
      * @name            listFilesInFolder()
-     *                  Lists files of a given folder
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
+     *
      * @use             $this->listFiles()
      * 
-     * @param           integer $folder         Folder ID
-     * 
-     * @return          array   $response
+     * @param           mixed		$folder
+     * @param           array 		$filter
+	 * @param			array 		$sortOrder
+	 * @param			array		$limit
+     *
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
 
-    public function listFilesInFolder($folder, $filter = null, $sortorder = null, $limit = null, $query_str = null) {
+    public function listFilesInFolder($folder, $filter = null, $sortOrder = null, $limit = null) {
+		$timeStamp = time();
+		$response = $this->getFileUploadFolder($folder);
+		if($response->error->exist){
+			return $response;
+		}
+		$folder = $response->result->set;
         $filter[] = array(
             'glue' => ' and',
             'condition' => array(
-                'column' => $this->entity['file']['alias'] . '.file_upload_folder',
+                'column' => $this->entity['f']['alias'] . '.file_upload_folder',
                 'comparison' => '=',
-                'value' => $folder)
+                'value' => $folder->getId())
         );
-        return $this->listFiles($filter, $sortorder, $limit, $query_str);
+        $response = $this->listFiles($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
     }
 
     /**
@@ -690,174 +699,276 @@ class FileManagementModel extends CoreModel {
      *                  Lists files of a given site
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
+     *
      * @use             $this->listFiles()
      * 
-     * @param           integer   $folder     Site ID
-     * 
-     * @return          array   $response
+     * @param           mixed		$site
+	 * @param			array		$filter
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
+     *
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
+    public function listFilesOfSite($site, $filter = null, $sortOrder = null, $limit = null) {
+		$timeStamp = time();
+		$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+		$response = $sModel->getSite($site);
+		if($response->error->exist){
+			return $response;
+		}
+		$site = $response->result->set;
+		$filter[] = array(
+			'glue' => ' and',
+			'condition' => array(
+				'column' => $this->entity['f']['alias'] . '.site',
+				'comparison' => '=',
+				'value' => $site->getId())
+		);
+		$response = $this->listFiles($filter, $sortOrder, $limit);
 
-    public function listFilesOfSite($site, $filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        $filter[] = array(
-            'glue' => ' and',
-            'condition' => array(
-                'column' => $this->entity['file']['alias'] . '.site',
-                'comparison' => '=',
-                'value' => $site)
-        );
-        return $this->listFiles($filter, $sortorder, $limit, $query_str);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
     }
+	/**
+	 * @name            listFileUploadFolders()
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 * @author          Said Imamoglu
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array   $filter
+	 * @param			array	$sortOrder
+	 * @param			array	$limit
+	 *
+	 * @return          array   $response
+	 *
+	 */
+	public function listFileUploadFolders($filter = null, $sortOrder = null, $limit = null) {
+		$timeStamp = time();
+		if (!is_array($sortOrder) && !is_null($sortOrder)) {
+			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
+		}
 
+		$oStr = $wStr = $gStr = $fStr = '';
+
+		$qStr = 'SELECT '.$this->entity['fuf']['alias']
+			.' FROM '.$this->entity['fuf']['name'].' '.$this->entity['fuf']['alias'];
+
+		if (!is_null($sortOrder)) {
+			foreach ($sortOrder as $column => $direction) {
+				switch ($column) {
+					case 'id':
+					case 'name':
+					case 'url_key':
+					case 'path_absolute':
+					case 'url':
+					case 'type':
+					case 'allowed_max_size':
+					case 'allowed_min_size':
+					case 'allowed_max_width':
+					case 'allowed_min_width':
+					case 'allowed_max_height':
+					case 'allowed_min_height':
+					case 'count_files':
+					case 'site':
+						$column = $this->entity['fuf']['alias'].'.'.$column;
+						break;
+				}
+				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
+			}
+			$oStr = rtrim($oStr, ', ');
+			$oStr = ' ORDER BY '.$oStr.' ';
+		}
+		if (!is_null($filter)) {
+			$fStr = $this->prepareWhere($filter);
+			$wStr = ' WHERE '.$fStr;
+		}
+
+		$qStr .= $wStr.$gStr.$oStr;
+
+		$q = $this->em->createQuery($qStr);
+		$q = $this->addLimit($q, $limit);
+		$result = $q->getResult();
+
+		$totalRows = count($result);
+		if ($totalRows < 1) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
     /**
      * @name            listFilesWithExtension()
-     *                  Lists files of a given extension
      * 
      * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
+     * @author          Said Imamoğlu
+     *
      * @use             $this->listFiles()
      * 
-     * @param           string  $extension     Extension name (jpg,png etc..)
+     * @param           string		$extension
+	 * @param			array		$filter
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
      * 
-     * @return          array   $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
-
-    public function listFilesWithExtension($extension, $filter = null, $sortorder = null, $limit = null, $query_str = null) {
+    public function listFilesWithExtension($extension, $filter = null, $sortOrder = null, $limit = null) {
         if (!is_string($extension)) {
-            return $this->createException('InvalidParameterException', 'string', 'err.invalid.parameter.extension');
+			return $this->createException('InvalidParameterValueException', 'Extension must be a string.', 'E:S:007');
         }
-
         $filter[] = array(
             'glue' => ' and',
             'condition' => array(
-                'column' => $this->entity['file']['alias'] . '.extension',
+                'column' => $this->entity['f']['alias'] . '.extension',
                 'comparison' => '=',
                 'value' => $extension)
         );
-        return $this->listFiles($filter, $sortorder, $limit, $query_str);
+        return $this->listFiles($filter, $sortOrder, $limit);
     }
 
     /**
      * @name            listFilesWithType()
-     *                  Lists files of a given type
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
-     * @use             $this->type_opts
+     *
      * @use             $this->listFiles()
      * 
-     * @param           char    $type        Code of type (image use i,for audio use a)
+     * @param           string		$type
+	 * @param			array		$filter
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
      * 
-     * @return          array   $response
-     * 
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
 
-    public function listFilesWithType($type, $filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        if (strlen($type) > 1 || is_integer($type) || !in_array($type, $this->type_opts)) {
-            return $this->createException('InvalidParameterException', 'string', 'err.invalid.parameter.extension');
-        }
+    public function listFilesWithType($type, $filter = null, $sortOrder = null, $limit = null) {
+		$timeStamp = time();
+		$typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's');
+        if(!in_array($type, $typeOpts)){
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Type must be one of the following: '.implode(', ', $typeOpts).'.', 'E:S:004');
+		}
 
         $filter[] = array(
             'glue' => ' and',
             'condition' => array(
-                'column' => $this->entity['file']['alias'] . '.type',
+                'column' => $this->entity['f']['alias'] . '.type',
                 'comparison' => '=',
                 'value' => $type)
         );
-        return $this->listFiles($filter, $sortorder, $limit, $query_str);
+        $response = $this->listFiles($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->Execution->end = time();
+
+		return $response;
     }
 
     /**
-     * @name            listDocumentFiles()
-     *                  Lists document files
+     * @name            listDocuments()
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
+     *
      * @use             $this->listFilesWithType()
+     *
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
      * 
-     * @param           mixed   $type     Code of type 
-     * 
-     * @return          array   $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
-
-    public function listDocumentFiles($type = 'd', $filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        return $this->listFilesWithType($type, $sortorder, $limit, $query_str);
+    public function listDocumentFiles($sortOrder = null, $limit = null) {
+        return $this->listFilesWithType('d', $sortOrder, $limit);
     }
 
+	/**
+	 * @name            listFlashFiles()
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 * @author          Said Imamoglu
+	 *
+	 * @use             $this->listFilesWithType()
+	 *
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 *
+	 */
+	public function listFlashFiles($sortOrder = null, $limit = null) {
+		return $this->listFilesWithType('f', $sortOrder, $limit);
+	}
+
+	/**
+	 * @name            listImages()
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 * @author          Said Imamoglu
+	 *
+	 * @use             $this->listFilesWithType()
+	 *
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 *
+	 */
+	public function listImages($sortOrder = null, $limit = null) {
+		return $this->listFilesWithType('i', $sortOrder, $limit);
+	}
+
     /**
-     * @name            listFlashFiles()
-     *                  Lists flash files 
+     * @name            listImagesWithDimension()
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
-     * @use             $this->listFilesWithType()
-     * 
-     * @param           mixed   $type     Code of type
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function listFlashFiles($type = 'f', $filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        return $this->listFilesWithType($type, $sortorder, $limit, $query_str);
-    }
-
-    /**
-     * @name            listImageFiles()
-     *                  Lists Image files 
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->listFilesWithType()
-     * 
-     * @param           mixed   $type     Code of type
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function listImageFiles($type = 'i', $filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        return $this->listFilesWithType($type, $sortorder, $limit, $query_str);
-    }
-
-    /**
-     * @name            listImageFilesWithDimension()
-     *                  Lists files of a given width and height
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
+     *
      * @use             $this->createException()
      * @use             $this->listFiles()
      * 
-     * @throws          InvalidParameterException
-     * 
-     * @param           integer $width      Width of file
-     * @param           integer $height     Height of file
-     * 
-     * @return          array   $response
+     * @param           integer 	$width
+     * @param           integer 	$height
+     * @param           array 		$sortOrder
+     * @param           array 		$limit
+     *
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
 
-    public function listImageFilesWithDimension($width, $height, $sortorder = null, $limit = null, $query_str = null) {
+    public function listImagesWithDimension($width, $height, $sortOrder = null, $limit = null) {
+		$timeStamp = time();
         if (!is_integer($width) || !is_integer($height)) {
-            return $this->createException('InvalidParameterException', 'expected integer dimensions', 'err.invalid.parameter.dimension');
+            return $this->createException('InvalidParameterValueException', '$width and $height parameters must be integers.', 'E:S:008');
         }
 
         $filter[] = array(
@@ -866,75 +977,81 @@ class FileManagementModel extends CoreModel {
                 0 => array(
                     'glue' => ' and',
                     'condition' => array(
-                        'column' => $this->entity['file']['alias'] . '.width',
+                        'column' => $this->entity['f']['alias'] . '.width',
                         'comparison' => '=',
                         'value' => $width
                     )),
                 1 => array(
                     'glue' => ' and',
                     'condition' => array(
-                        'column' => $this->entity['file']['alias'] . '.height',
+                        'column' => $this->entity['f']['alias'] . '.height',
                         'comparison' => '=',
                         'value' => $height
                     )))
         );
-        return $this->listFiles($filter, $sortorder, $limit, $query_str);
+        $response =  $this->listFiles($filter, $sortOrder, $limit);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
     }
 
-    /**
-     * @name            listSoftwareFiles()
-     *                  Lists software files.
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->listFiles()
-     * 
-     * @param           char    $type       Code of type
-     * 
-     * @return          array   $response
-     * 
-     */
+	/**
+	 * @name            listSoftwares()
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 * @author          Said Imamoglu
+	 *
+	 * @use             $this->listFilesWithType()
+	 *
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 *
+	 */
+	public function listSoftwares($sortOrder = null, $limit = null) {
+		return $this->listFilesWithType('s', $sortOrder, $limit);
+	}
 
-    public function listSoftwareFiles($type = 's', $filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        return $this->listFilesWithType($type, $sortorder, $limit, $query_str);
-    }
-
-    /**
-     * @name            listVideoFiles()
-     *                  Lists video files.
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->listFiles()
-     * 
-     * @param           char    $type       Code of type
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function listVideoFiles($type = 'v', $filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        return $this->listFilesWithType($type, $sortorder, $limit, $query_str);
-    }
-
+	/**
+	 * @name            listVideos()
+	 *
+	 * @since           1.0.0
+	 * @version         1.0.5
+	 *
+	 * @author          Can Berkol
+	 * @author          Said Imamoglu
+	 *
+	 * @use             $this->listFilesWithType()
+	 *
+	 * @param			array		$sortOrder
+	 * @param			array		$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 *
+	 */
+	public function listVideos($sortOrder = null, $limit = null) {
+		return $this->listFilesWithType('v', $sortOrder, $limit);
+	}
     /**
      * @name            updateFile()
-     *                  Updates single file. The file must be either a post data (array) or an entity
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
+     *
      * @use             $this->resetResponse()
      * @use             $this->updateFiles()
      * 
      * @param           mixed   $file     entity, id
      * 
-     * @return          array   $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
     public function updateFile($file) {
@@ -943,818 +1060,235 @@ class FileManagementModel extends CoreModel {
 
     /**
      * @name            updateFiles()
-     *                  Updates one or more file details in database.
      * 
      * @since           1.0.0
-     * @version         1.0.2
+     * @version         1.0.5
      *
      * @author          Can Berkol
      * @author          Said Imamoglu
      *
      * @use             $this->createException()
+     *
+     * @param           array   $collection
      * 
-     * @throws          InvalidParameterException
-     * 
-     * @param           array   $collection     Collection of Product entities or array of entity details.
-     * 
-     * @return          array   $response
-     * 
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
+	public function updateFiles($collection){
+		$timeStamp = time();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countUpdates = 0;
+		$updatedItems = array();
+		$localizations = array();
+		foreach ($collection as $data) {
+			if ($data instanceof BundleEntity\File) {
+				$entity = $data;
+				$this->em->persist($entity);
+				$updatedItems[] = $entity;
+				$countUpdates++;
+			}
+			else if (is_object($data)) {
+				if(!property_exists($data, 'site')){
+					$data->site = 1;
+				}
+				if(!property_exists($data, 'folder')){
+					$data->folder = 1;
+				}
+				$response = $this->getFile($data->id);
+				if ($response->error->exist) {
+					return $this->createException('EntityDoesNotExist', 'File with id / username / email '.$data->id.' does not exist in database.', 'E:D:002');
+				}
+				$oldEntity = $response->result->set;
+				foreach ($data as $column => $value) {
+					$set = 'set' . $this->translateColumnName($column);
+					switch ($column) {
+						case 'local':
+							foreach ($value as $langCode => $translation) {
+								$localization = $oldEntity->getLocalization($langCode, true);
+								$newLocalization = false;
+								if (!$localization) {
+									$newLocalization = true;
+									$localization = new BundleEntity\FileLocalization();
+									$mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+									$response = $mlsModel->getLanguage($langCode);
+									$localization->setLanguage($response->result->set);
+									$localization->setFile($oldEntity);
+								}
+								foreach ($translation as $transCol => $transVal) {
+									$transSet = 'set' . $this->translateColumnName($transCol);
+									$localization->$transSet($transVal);
+								}
+								if ($newLocalization) {
+									$this->em->persist($localization);
+								}
+								$localizations[] = $localization;
+							}
+							$oldEntity->setLocalizations($localizations);
+							break;
+						case 'site':
+							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+							$response = $sModel->getSite($value);
+							if (!$response->error->exist) {
+								$oldEntity->$set($response->result->set);
+							} else {
+								return $this->createException('EntityDoesNotExist', 'The site with the id / key / domain "'.$value.'" does not exist in database.', 'E:D:002');
+							}
+							unset($response, $sModel);
+							break;
+						case 'folder':
+							$response = $this->getFileUploadFolder($value);
+							if(!$response->error->exist){
+								$entity->$set($response->result->set);
+							}
+							unset($response);
+							break;
+						case 'id':
+							break;
+						default:
+							$oldEntity->$set($value);
+							break;
+					}
+					if ($oldEntity->isModified()) {
+						$this->em->persist($oldEntity);
+						$countUpdates++;
+						$updatedItems[] = $oldEntity;
+					}
+				}
+			}
+		}
+		if($countUpdates > 0){
+			$this->em->flush();
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+	}
 
-    public function updateFiles($collection) {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countUpdates = 0;
-        $updatedItems = array();
-        foreach ($collection as $data) {
-            if ($data instanceof BundleEntity\File) {
-                $entity = $data;
-                $this->em->persist($entity);
-                $updatedItems[] = $entity;
-                $countUpdates++;
-            } else if (is_object($data)) {
-                if (!property_exists($data, 'id') || !is_numeric($data->id)) {
-                    return $this->createException('InvalidParameter', 'Each data must contain a valid identifier id, integer', 'err.invalid.parameter.collection');
-                }
-                if (!property_exists($data, 'folder')) {
-                    $data->folder = 1;
-                }
-                if (property_exists($data, 'site')) {
-                    $data->site = 1;
-                }
-                $response = $this->getFile($data->id, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'File with id ' . $data->id, 'err.invalid.entity');
-                }
-                $oldEntity = $response['result']['set'];
-                foreach ($data as $column => $value) {
-                    $set = 'set' . $this->translateColumnName($column);
-                    switch ($column) {
-                        case 'local':
-                            $localizations = array();
-                            foreach ($value as $langCode => $translation) {
-                                $localization = $oldEntity->getLocalization($langCode, true);
-                                $newLocalization = false;
-                                if (!$localization) {
-                                    $newLocalization = true;
-                                    $localization = new BundleEntity\FileLocalization();
-                                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                                    $response = $mlsModel->getLanguage($langCode, 'iso_code');
-                                    $localization->setLanguage($response['result']['set']);
-                                    $localization->setFile($oldEntity);
-                                }
-                                foreach ($translation as $transCol => $transVal) {
-                                    $transSet = 'set' . $this->translateColumnName($transCol);
-                                    $localization->$transSet($transVal);
-                                }
-                                if ($newLocalization) {
-                                    $this->em->persist($localization);
-                                }
-                                $localizations[] = $localization;
-                            }
-                            $oldEntity->setLocalizations($localizations);
-                            break;
-                        case 'site':
-                            $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-                            $response = $sModel->getSite($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
-                            } else {
-                                new CoreExceptions\SiteDoesNotExistException($this->kernel, $value);
-                            }
-                            unset($response, $sModel);
-                            break;
-                        case 'folder':
-                            $response = $this->getFileUploadFolder($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
-                            } else {
-                                new CoreExceptions\EntityDoesNotExistException($this->kernel, $value);
-                            }
-                            unset($response);
-                            break;
-                        case 'id':
-                            break;
-                        default:
-                            $oldEntity->$set($value);
-                            break;
-                    }
-                    if ($oldEntity->isModified()) {
-                        $this->em->persist($oldEntity);
-                        $countUpdates++;
-                        $updatedItems[] = $oldEntity;
-                    }
-                }
-            } else {
-                new CoreExceptions\InvalidDataException($this->kernel);
-            }
-        }
-        if ($countUpdates > 0) {
-            $this->em->flush();
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $updatedItems,
-                'total_rows' => $countUpdates,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.update.done',
-        );
-        return $this->response;
-    }
-
-    /**
-     * @name            deleteFileUploadFolder()
-     *                  Deletes provided folder from database.
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->by_opts
-     * @use             $this->createException()
-     * @use             $this->delete_entities()
-     * @use             $this->doesFileUploadFolderExist()
-     * @use             $this->prepare_delete()
-     * @use             $this->createQuery()
-     * @use             $this->getResult()
-     * 
-     * @param           array   $collection     Collection consist one of the following: entity,id
-     * @param           string  $by             Accepts the $this->by_opts options
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function deleteFileUploadFolder($collection, $by = 'id') {
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameterException', 'array()', 'err.invalid.parameter');
-        }
-
-        if (!in_array($by, $this->by_opts)) {
-            return $this->createException('InvalidByOptionException', implode(',', $this->by_opts), 'err.invalid.parameter.by');
-        }
-
-        /** If COLLECTION is ENTITYs then USE ENTITY MANAGER */
-        if ($by == 'entity') {
-            $sub_response = $this->delete_entities($collection, 'BundleEntity\File');
-            if ($sub_response['process'] == 'stop') {
-                $mode = 'single';
-                if ($sub_response['item_count'] > 1) {
-                    $mode = 'multiple';
-                }
-                $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                    'result' => array(
-                        'set' => $sub_response['entries']['valid'],
-                        'total_rows' => $sub_response['item_count'],
-                        'last_insert_id' => null,
-                    ),
-                    'error' => false,
-                    'code' => 'scc.entity.deleted.' . $mode,
-                );
-
-                return $this->response;
-            } else {
-                $collection = $sub_response['entries']['invalid'];
-            }
-        } elseif ($by == 'id') {
-
-            /* If $collection is not ENTITY then use query * */
-
-
-            /* Defining two arrays which collect exit and not exist record(s) */
-            $notexistFolders = array();
-            $existFolders = array();
-            foreach ($collection as $folder) {
-                $entry = $this->doesFileUploadFolderExist($folder, 'id');
-
-                /* Collect exist records */
-                if (!$entry['error']) {
-                    $existFolders[] = $folder;
-                } else {
-                    $notexistFolders[] = $folder;
-                }
-                $entry['error'] = false;
-            }
-
-            /*
-             * Delete exist records.
-             */
-
-            if (count($existFolders) > 0) {
-
-                $table = $this->entity['file_upload_folder']['name'] . ' ' . $this->entity['file_upload_folder']['alias'];
-                $q_str = $this->prepare_delete($table, $this->entity['file_upload_folder']['alias'] . '.' . $by, $existFolders);
-                $query = $this->em->createQuery($q_str);
-
-                /**
-                 * 6. Run query
-                 */
-                $query->getResult();
-            }
-            /*
-             * Count how many records not exist
-             */
-            //$count = (count($notexistFolders)>0) ? '.multiple' : '.single';
-
-            if (count($notexistFolders) > 0) {
-                $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                    'result' => array(
-                        'set' => $notexistFolders,
-                        'total_rows' => count($existFolders),
-                        'last_insert_id' => null,
-                    ),
-                    'error' => true,
-                    'code' => 'err.db.record.notfound'
-                );
-            } else {
-                $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                    'result' => array(
-                        'set' => $collection,
-                        'total_rows' => count($existFolders),
-                        'last_insert_id' => null,
-                    ),
-                    'error' => false,
-                    'code' => 'scc.db.deleted'
-                );
-            }
-
-            return $this->response;
-        }
-    }
-
-    /**
-     * @name            doesFileUploadFolderExist()
-     *                  Checks if file upload folder exist in db.
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->resetResponse()
-     * @use             $this->getFileUploadFolder()
-     * 
-     * @param           mixed   $folder     Entity or entity ID
-     * @param           string  $by         By option
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function doesFileUploadFolderExist($folder, $by = 'id') {
-        $this->resetResponse();
-        $exist = false;
-        $error = false;
-        $code = 'scc.db.entry.exist';
-        $response = $this->getFileUploadFolder($folder, $by);
-        //print_r($response); die;
-        if ($response['error'] && $response['result']['total_rows'] < 1) {
-            $exist = true;
-            $error = true;
-            $code = 'err.db.entry.notexist';
-        }
-
-
-        /* Prepare and Return Response */
-        $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $exist,
-                'total_rows' => $response['result']['total_rows'],
-                'last_insert_id' => null,
-            ),
-            'error' => $error,
-            'code' => $code,
-        );
-
-        return $this->response;
-    }
-
-    /**
-     * @name            getFileUploadFolder()
-     *                  Returns folder of given ID
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->resetResponse()
-     * @use             $this->createException()
-     * @use             $this->listFileUploadFolders()
-     * 
-     * 
-     * @throws          InvalidByOptionException
-     * @throws          InvalidParameterException
-     * @throws          InvalidEntityException
-     * 
-     * 
-     * @param           mixed   $folder     Entity or Entity id of a folder
-     * @param           string  $by         By option
-     * @return          array   $response
-     * 
-     */
-
-    public function getFileUploadFolder($folder, $by = 'id') {
-
-        $this->resetResponse();
-        if (!in_array($by, $this->by_opts)) {
-            return $this->createException('InvalidByOptionException', implode(',', $this->by_opts), 'err.invalid.parameter.by');
-        }
-
-        if (!is_object($folder) && !is_numeric($folder) && !is_string($folder)) {
-            return $this->createException('InvalidParameterException', 'object,numeric or string', 'err.invalid.parameter.file_upload_folder');
-        }
-        if ($by == 'entity') {
-            if (is_object($folder)) {
-                if (!$folder instanceof BundleEntity\FileUploadFolder) {
-                    return $this->createException('InvalidEntityException', 'BundleEntity\FileUploadFolder', 'err.invalid.parameter.file_upload_folder');
-                }
-                /**
-                 * Prepare and Return Response
-                 */
-                $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                    'result' => array(
-                        'set' => $folder,
-                        'total_rows' => 1,
-                        'last_insert_id' => null,
-                    ),
-                    'error' => false,
-                    'code' => 'scc.entity.found'
-                );
-
-                return $this->resetResponse();
-            }
-        } else {
-            $filter[] = array(
-                'glue' => '',
-                'condition' => array('column' => $this->entity['file_upload_folder']['alias'] . '.' . $by, 'comparison' => '=', 'value' => $folder)
-            );
-
-            $response = $this->listFileUploadFolders($filter, null, array('start' => 0, 'count' => 1));
-            if ($response['error']) {
-                return $response;
-            }
-
-            $collection = $response['result']['set'];
-
-            /**
-             * Prepare and Return Response
-             */
-            $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => $collection[0],
-                    'total_rows' => count($collection),
-                    'last_insert_id' => null,
-                ),
-                'error' => false,
-                'code' => 'scc.entity.found',
-            );
-            return $this->response;
-        }
-    }
-
-    /**
-     * @name            insertFileUploadFolder()
-     *                  Inserts one file attribute into db.
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->listFiles()
-     * 
-     * @param           mixed   $colletion      Entity or post
-     * @param           string  $by             By option
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function insertFileUploadFolder($collection, $by = 'post') {
-        return $this->insertFileUploadFolders($collection, $by);
-    }
-
-    /**
-     * @name            insertFileUploadFolders()
-     *                  Inserts one or more file into db.
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder
-     * @use             $this->createException()
-     * @use             $this->insert_entities()
-     * 
-     * @throws          InvalidParameterException
-     * @throws          InvalidMethodException
-     * 
-     *  
-     * @param           mixed   $colletion      Entity or post
-     * @param           string  $by             By option
-     * 
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function insertFileUploadFolders($collection, $by = 'post') {
-        /* Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameterException', 'array() or Integer', 'err.invalid.parameter.collection');
-        }
-
-        if (!in_array($by, $this->by_opts)) {
-            return $this->createException('InvalidParameterException', implode(',', $this->by_opts), 'err.invalid.parameter.by.collection');
-        }
-
-        if ($by == 'entity') {
-            $sub_response = $this->insert_entities($collection, 'BiberLtd\\Core\\Bundles\\FileManagementBundle\\Entity\\FileUploadFolder');
-        } elseif ($by == 'post') {
-
-            /*
-             * exptects an array like 
-             * 
-             * ////////////////////////////////
-             * $collection = array(0 => array(
-             *      'name'  => 'Test',
-             *      'url'   => 'url'
-             * )
-             * );
-             * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\                                  
-             */
-            foreach ($collection as $item) {
-                $entity = new \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder();
-                foreach ($item['folder'] as $column => $value) {
-                    $folder_method = 'set_' . $column;
-                    if (method_exists($entity, $folder_method)) {
-                        $entity->$folder_method($value);
-                    } else {
-                        return $this->createException('InvalidMethodException', 'method not found in entity', 'err.method.notfound');
-                    }
-                }
-                $this->em->persist($entity);
-            }
-            $this->em->flush();
-            $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => $collection,
-                    'total_rows' => count($collection),
-                    'last_insert_id' => $entity->getId(),
-                ),
-                'error' => false,
-                'code' => 'scc.db.insert.done',
-            );
-
-            return $this->response;
-        }
-    }
-
-    /**
-     * @name            listFileUploadFolders()
-     *                  Lists folders of a given file
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->resetResponse()
-     * @use             $this->createException()
-     * @use             $this->prepare_where()
-     * @use             $this->createQuery()
-     * @use             $this->addLimit()
-     * @use             $this->getResult()
-     * 
-     * 
-     * $throws          InvalidSortOrderException
-     * $throws          InvalidLimitException
-     * 
-     * 
-     * @param           array   $filter     Filter for database query
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function listFileUploadFolders($filter = null, $sortorder = null, $limit = null, $query_str = null) {
-        $this->resetResponse();
-        if (!is_array($sortorder) && !is_null($sortorder)) {
-            return $this->createException('InvalidSortOrderException', '', 'err.invalid.parameter.sortorder');
-        }
-
-        /**
-         * Add filter check to below to set join_needed to true
-         */
-        $order_str = '';
-        $where_str = '';
-        $group_str = '';
-        $filter_str = '';
-
-        /**
-         * Start creating the query
-         *
-         * Note that if no custom select query is provided we will use the below query as a start
-         */
-        if (is_null($query_str)) {
-            $query_str = 'SELECT ' . $this->entity['file_upload_folder']['alias']
-                    . ' FROM ' . $this->entity['file_upload_folder']['name'] . ' ' . $this->entity['file_upload_folder']['alias'];
-        }
-
-        /**
-         * Prepare ORDER BY section of query
-         */
-        if (!is_null($sortorder)) {
-            foreach ($sortorder as $column => $direction) {
-                switch ($column) {
-                    case 'id':
-                    case 'name':
-                    case 'url_key':
-                    case 'path_absolute':
-                    case 'url':
-                    case 'type':
-                    case 'allowed_max_size':
-                    case 'allowed_min_size':
-                    case 'allowed_max_width':
-                    case 'allowed_min_width':
-                    case 'allowed_max_height':
-                    case 'allowed_min_height':
-                    case 'count_files':
-                    case 'site':
-                        break;
-                }
-                $order_str .= ' ' . $column . ' ' . strtoupper($direction) . ', ';
-            }
-            $order_str = rtrim($order_str, ', ');
-            $order_str = ' ORDER BY ' . $order_str . ' ';
-        }
-
-        /**
-         * Prepare WHERE section of query
-         */
-
-        if (!is_null($filter)) {
-            $filter_str = $this->prepare_where($filter);
-            $where_str = ' WHERE ' . $filter_str;
-        }
-
-        $query_str .= $where_str . $group_str . $order_str;
-        $query = $this->em->createQuery($query_str);
-
-        /**
-         * Prepare LIMIT section of query
-         */
-
-        if (!is_null($limit) && is_numeric($limit)) {
-            /*
-             * if limit is set
-             */
-            if (isset($limit['start']) && isset($limit['count'])) {
-
-                $query = $this->addLimit($query, $limit);
-            } else {
-                $this->createException('InvalidLimitException', '', 'err.invalid.limit');
-            }
-        }
-        $files = $query->getResult();
-        $total_rows = count($files);
-        if ($total_rows < 1) {
-            $this->response['error'] = true;
-            $this->response['code'] = 'err.db.entry.notexist';
-            return $this->response;
-        }
-
-        $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $files,
-                'total_rows' => $total_rows,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-
-
-
-        return $this->response;
-    }
-
-    /**
-     * @name            listFileUploadFoldersWithLessFilesThan()
-     *                  Lists folders which has less files than provided value
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->listFiles()
-     * 
-     * @param           integer $value      Value of count files
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function listFileUploadFoldersWithLessFilesThan($value, $sortorder = null, $limit = null, $query_str = null) {
-        $filter[] = array(
-            'glue' => ' and',
-            'condition' => array(
-                'column' => $this->entity['file_upload_folder']['alias'] . 'count_files',
-                'comparison' => '<',
-                'value' => $value
-            )
-        );
-        return $this->listFileUploadFolders($filter, $sortorder, $limit, $query_str);
-    }
-
-    /**
-     * @name            listFileUploadFoldersWithMoreFilesThan()
-     *                  Lists folders which has more files than provided value
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     * @use             $this->listFiles()
-     * 
-     * @param           integer $value      Value of count files
-     * 
-     * @return          array   $response
-     * 
-     */
-
-    public function listFileUploadFoldersWithMoreFilesThan($value) {
-        $filter[] = array(
-            'glue' => ' and',
-            'condition' => array(
-                'column' => $this->entity['file_upload_folder']['alias'] . 'count_files',
-                'comparison' => '>',
-                'value' => $value
-            )
-        );
-        return $this->listFileUploadFolders($filter);
-    }
-
-    /**
-     * @name            listExternalFileUploadFolders()
-     *                  This method has no definiton yet
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     */
-
-    public function listExternalFileUploadFolders() {
-        
-    }
-
-    /**
-     * @name            listInternalFileUploadFolders()
-     *                  This method has no definiton yet
-     * 
-     * @since           1.0.0
-     * @version         1.0.0
-     * @author          Said Imamoglu
-     * 
-     */
-
-    public function listInternalFileUploadFolders() {
-        
-    }
 
     /**
      * @name            updateFileUploadFolder()
-     *                  Updates single folder of given post data or entity
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
+     *
      * @use             $this->updateFileUploadFolders()
      * 
-     * @param           mixed   $collection     Entity or post data
-     * @param           string  $by             entity or post
+     * @param           mixed   $folder
      * 
-     * @return          array   $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
 
-    public function updateFileUploadFolder($collection, $by = 'post') {
-        return $this->updateFileUploadFolders($collection, $by);
+    public function updateFileUploadFolder($folder) {
+        return $this->updateFileUploadFolders(array($folder));
     }
 
     /**
      * @name            updateFileUploadFolders()
-     *                  Updated one or more folders in database
      * 
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.5
+	 *
+     * @author          Can Berkol
      * @author          Said Imamoglu
-     * 
-     * @use             $this->update_entities()
+     *
      * @use             $this->createException()
-     * @use             $this->listFileUploadFolders()
+	 *
+     * @param           mixed   $collection
      * 
-     * 
-     * @thwors          InvalidParameterException
-     * 
-     * 
-     * @param           mixed   $collection     Entity or post data
-     * @param           string  $by             entity or post
-     * 
-     * @return          array   $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
-
-    public function updateFileUploadFolders($collection, $by) {
-        if ($by == 'entity') {
-            $sub_response = $this->update_entities($collection, 'BundleEntity\FileUploadFolder');
-            /**
-             * If there are items that cannot be deleted in the collection then $sub_Response['process']
-             * will be equal to continue and we need to continue process; otherwise we can return response.
-             */
-            if ($sub_response['process'] == 'stop') {
-                $this->response = array(
-	    'rowCount' => $this->response['rowCount'],
-                    'result' => array(
-                        'set' => $sub_response['entries']['valid'],
-                        'total_rows' => $sub_response['item_count'],
-                        'last_insert_id' => null,
-                    ),
-                    'error' => false,
-                    'code' => 'scc.db.delete.done',
-                );
-                return $this->response;
-            } else {
-                $collection = $sub_response['entries']['invalid'];
-            }
-        } elseif ($by == 'post') {
-            if (!is_array($collection)) {
-                return $this->createException('InvalidParameterException', 'expected an array', 'err.invalid.by');
-            }
-
-            $foldersToUpdate = array();
-            $foldersId = array();
-            $count = 0;
-
-            foreach ($collection as $item) {
-                if (!isset($item['id'])) {
-                    unset($collection[$count]);
-                }
-                $foldersId[] = $item['id'];
-                $foldersToUpdate[$item['id']] = $item;
-                $count++;
-            }
-            $filter = array(
-                array(
-                    'glue' => 'and',
-                    'condition' => array(
-                        array(
-                            'glue' => 'and',
-                            'condition' => array('column' => $this->entity['file_upload_folder']['alias'] . '.id', 'comparison' => 'in', 'value' => $foldersId),
-                        )
-                    )
-                )
-            );
-            $response = $this->listFileUploadFolders($filter);
-            if ($response['error']) {
-                return $this->createException('InvalidParameterException', 'Array', 'err.invalid.parameter.collection');
-            }
-
-            $entities = $response['result']['set'];
-
-            foreach ($entities as $entity) {
-                $folderData = $foldersToUpdate[$entity->getId()];
-                unset($folderData['id']);
-                foreach ($folderData as $column => $value) {
-                    $folderMethodSet = 'set_' . $column;
-                    $entity->$folderMethodSet($value);
-                }
-                $this->em->persist($entity);
-            }
-
-            $this->em->flush();
-        }
-    }
+	public function updateFileUploadFolders($collection){
+		$timeStamp = time();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countUpdates = 0;
+		$updatedItems = array();
+		foreach($collection as $data){
+			if($data instanceof BundleEntity\FileUploadFolder){
+				$entity = $data;
+				$this->em->persist($entity);
+				$updatedItems[] = $entity;
+				$countUpdates++;
+			}
+			else if(is_object($data)){
+				if(!property_exists($data, 'id') || !is_numeric($data->id)){
+					return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" parameter and id parameter must have an integer value.', 'E:S:003');
+				}
+				if(!property_exists($data, 'date_updated')){
+					$data->date_updated = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+				}
+				if(!property_exists($data, 'date_added')){
+					unset($data->date_added);
+				}
+				$response = $this->getFileUploadFolder($data->id);
+				if($response->error->exist){
+					return $this->createException('EntityDoesNotExist', 'File upload folder with id '.$data->id, 'E:D:002');
+				}
+				$oldEntity = $response->result->set;
+				foreach($data as $column => $value){
+					$set = 'set'.$this->translateColumnName($column);
+					switch($column){
+						case 'site':
+							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+							$response = $sModel->getSite($value);
+							if(!$response->error->exist){
+								$oldEntity->$set($response->result->set);
+							}
+							else{
+								new CoreExceptions\EntityDoesNotExistException($this->kernel, $value);
+							}
+							unset($response, $sModel);
+							break;
+						case 'id':
+							break;
+						default:
+							$oldEntity->$set($value);
+							break;
+					}
+					if($oldEntity->isModified()){
+						$this->em->persist($oldEntity);
+						$countUpdates++;
+						$updatedItems[] = $oldEntity;
+					}
+				}
+			}
+		}
+		if($countUpdates > 0){
+			$this->em->flush();
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+	}
 }
-
 /**
  * Change Log
+ * **************************************
+ * v1.0.7                      12.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: insertFileLocalizations() rewritten.
+ * CR :: getFile() now returns files based on source_original and source_preview keys.
+ *
+ * **************************************
+ * v1.0.6                      25.05.2015
+ * Can Berkol
+ * **************************************
+ * BF :: db_connection is replaced with dbConnection
+ *
+ * **************************************
+ * v1.0.5                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: Made compatible with CoreBundle v3.3.
+ *
  * **************************************
  * v1.0.4                      Can Berkol
  * 17.07.2014

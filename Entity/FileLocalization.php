@@ -1,4 +1,19 @@
 <?php
+/**
+ * @name        FileLocalization
+ * @package		BiberLtd\Bundle\CoreBundle\FileManagementBundle
+ *
+ * @author      Can Berkol
+ * @author		Murat Ünal
+ * @version     1.0.1
+ * @date        03.05.2015
+ *
+ * @copyright   Biber Ltd. (http://www.biberltd.com)
+ * @license     GPL v3.0
+ *
+ * @description Model / Entity class.
+ *
+ */
 namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -8,7 +23,7 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Table(
  *     name="file_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_file_localization", columns={"file","language"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUFileLocalization", columns={"file","language"})}
  * )
  */
 class FileLocalization extends CoreEntity
@@ -25,10 +40,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File",
-     *     inversedBy="localizations"
-     * )
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File", inversedBy="localizations")
      * @ORM\JoinColumn(name="file", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $file;
@@ -42,9 +54,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            setDescription ()
-     *                  Sets the description property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -66,8 +76,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            getDescription ()
-     *                  Returns the value of description property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -81,9 +90,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            setFile ()
-     *                  Sets the file property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -105,8 +112,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            getFile ()
-     *                  Returns the value of file property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -120,9 +126,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            setLanguage ()
-     *                  Sets the language property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -144,8 +148,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            getLanguage ()
-     *                  Returns the value of language property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -159,9 +162,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            setTitle ()
-     *                  Sets the title property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -183,8 +184,7 @@ class FileLocalization extends CoreEntity
 
     /**
      * @name            getTitle ()
-     *                  Returns the value of title property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -195,6 +195,13 @@ class FileLocalization extends CoreEntity
     public function getTitle() {
         return $this->title;
     }
-
-
 }
+
+/**
+ * Change Log:
+ * **************************************
+ * v1.0.1                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ */

@@ -2,9 +2,3 @@ services:
     filemanagement.model:
         class:        BiberLtd\Bundle\FileManagementBundle\Services\FileManagementModel
         arguments:    [@kernel, "default", "doctrine"]
-    filemanagement_fileupload.model:
-        class:        BiberLtd\Bundle\FileManagementBundle\Services\FileUpload
-    filemanagement_imageupload.model:
-        class:        BiberLtd\Bundle\FileManagementBundle\Services\ImageUpload
-    filemanagement_imagecrop.model:
-        class:        BiberLtd\Bundle\FileManagementBundle\Services\ImageCrop

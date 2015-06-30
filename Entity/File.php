@@ -5,8 +5,8 @@
  *
  * @author      Can Berkol
  * @author		Murat Ünal
- * @version     1.0.3
- * @date        17.07.2014
+ * @version     1.0.4
+ * @date        03.05.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -18,19 +18,20 @@ namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 
 use Doctrine\ORM\Mapping AS ORM;
 use \BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
-
-
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="file",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     indexes={
- *         @ORM\Index(name="idx_n_file_mime_type", columns={"mime_type"}),
- *         @ORM\Index(name="idx_n_file_extension", columns={"extension"}),
- *         @ORM\Index(name="idx_n_file_dimension", columns={"width","height"})
+ *         @ORM\Index(name="idxNFileMimeType", columns={"mime_type"}),
+ *         @ORM\Index(name="idxNFileExtension", columns={"extension"}),
+ *         @ORM\Index(name="idxNFileDimension", columns={"width","height"}),
+ *         @ORM\Index(name="idxNFileDateAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNFileDateUpdated", columns={"date_updated"}),
+ *         @ORM\Index(name="idxNFileDateRemoved", columns={"date_removed"})
  *     },
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_file_id", columns={"id"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUFileId", columns={"id"})}
  * )
  */
 class File extends CoreLocalizableEntity
@@ -63,7 +64,7 @@ class File extends CoreLocalizableEntity
     private $source_preview;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"i"})
      */
     private $type;
 
@@ -78,7 +79,7 @@ class File extends CoreLocalizableEntity
     private $height;
 
     /** 
-     * @ORM\Column(type="decimal", unique=true, length=5, nullable=false)
+     * @ORM\Column(type="decimal", unique=true, length=5, nullable=false, options={"default":0})
      */
     private $size;
 
@@ -102,13 +103,20 @@ class File extends CoreLocalizableEntity
      */
     private $exif;
 
-    /** 
-     * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\FilesOfMember",
-     *     mappedBy="file"
-     * )
-     */
-    private $files_of_members;
+	/**
+	 * @ORM\Column(type="datetime", nullable=false)
+	 */
+	public $date_added;
+
+	/**
+	 * @ORM\Column(type="datetime", nullable=false)
+	 */
+	public $date_updated;
+
+	/**
+	 * @ORM\Column(type="datetime", nullable=true)
+	 */
+	public $date_removed;
 
     /**
      * @ORM\OneToMany(
@@ -125,13 +133,10 @@ class File extends CoreLocalizableEntity
      */
     private $site;
 
-    /** 
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder",
-     *     inversedBy="files"
-     * )
-     * @ORM\JoinColumn(name="folder", referencedColumnName="id", nullable=false)
-     */
+	/**
+	 * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder", inversedBy="files")
+	 * @ORM\JoinColumn(name="folder", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+	 */
     private $folder;
 
     /******************************************************************
@@ -153,10 +158,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setExtension ()
-     *                                     Sets the extension property.
-     *                                     Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setExtension ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -178,8 +181,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getExtension ()
-     *                               Returns the value of extension property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -192,49 +194,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setFilesOfMembers ()
-     *                                          Sets the files_of_members property.
-     *                                          Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $files_of_members
-     *
-     * @return          object                $this
-     */
-    public function setFilesOfMembers($files_of_members) {
-        if(!$this->setModified('files_of_members', $files_of_members)->isModified()) {
-            return $this;
-        }
-		$this->files_of_members = $files_of_members;
-		return $this;
-    }
-
-    /**
-     * @name            getFilesOfMembers ()
-     *                                    Returns the value of files_of_members property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->files_of_members
-     */
-    public function getFilesOfMembers() {
-        return $this->files_of_members;
-    }
-
-    /**
-     * @name                  setFolder ()
-     *                                  Sets the folder property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setFolder ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -256,8 +217,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getFolder ()
-     *                            Returns the value of folder property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -270,10 +230,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setHeight ()
-     *                                  Sets the height property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setHeight ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -295,8 +253,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getHeight ()
-     *                            Returns the value of height property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -309,10 +266,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setMimeType ()
-     *                                    Sets the mime_type property.
-     *                                    Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setMimeType ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -334,8 +289,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getMimeType ()
-     *                              Returns the value of mime_type property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -348,10 +302,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setName ()
-     *                                Sets the name property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setName ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -373,8 +325,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getName ()
-     *                  Returns the value of name property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -388,9 +339,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            setSite ()
-     *                  Sets the site property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -412,8 +361,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getSite ()
-     *                          Returns the value of site property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -427,9 +375,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            setSize ()
-     *                  Sets the size property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -451,8 +397,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getSize ()
-     *                          Returns the value of size property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -465,10 +410,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setSourceOriginal ()
-     *                                          Sets the source_original property.
-     *                                          Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setSourceOriginal ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -490,8 +433,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getSourceOriginal ()
-     *                  Returns the value of source_original property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -505,9 +447,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            setSourcePreview ()
-     *                  Sets the source_preview property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -529,8 +469,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getSourcePreview ()
-     *                                   Returns the value of source_preview property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -543,10 +482,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setType ()
-     *                                Sets the type property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setType ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -568,8 +505,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getType ()
-     *                          Returns the value of type property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -582,10 +518,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setUrlKey ()
-     *                                  Sets the url_key property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setUrlKey ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -607,8 +541,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getUrlKey ()
-     *                  Returns the value of url_key property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -621,10 +554,8 @@ class File extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setWidth ()
-     *                                 Sets the width property.
-     *                                 Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setWidth ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -646,8 +577,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getWidth ()
-     *                  Returns the value of width property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -661,9 +591,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            setExif ()
-     *                  Sets the exif property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -685,8 +613,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getExif ()
-     *                  Returns the value of exif property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -700,9 +627,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            setTags ()
-     *                  Sets the tags property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -724,8 +649,7 @@ class File extends CoreLocalizableEntity
 
     /**
      * @name            getTags ()
-     *                  Returns the value of tags property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -739,6 +663,12 @@ class File extends CoreLocalizableEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.3                      03.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: ORM updates.
+ *
  * **************************************
  * v1.0.3                      Can Berkol
  * 10.10.2013
