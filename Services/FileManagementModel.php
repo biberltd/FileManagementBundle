@@ -12,8 +12,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.7
- * @date        12.06.2015
+ * @version     1.0.8
+ * @date        13.07.2015
  *
  */
 
@@ -81,7 +81,7 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @param           mixed           $file
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFile($file){
 		return $this->deleteFiles(array($file));
@@ -90,7 +90,7 @@ class FileManagementModel extends CoreModel {
 	 * @name 			deleteFiles()
 	 *
 	 * @since			1.0.0
-	 * @version         1.0.5
+	 * @version         1.0.8
 	 *
 	 * @author          Can Berkol
 	 *
@@ -98,7 +98,7 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @param           array           $collection
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFiles($collection) {
 		$timeStamp = time();
@@ -113,7 +113,7 @@ class FileManagementModel extends CoreModel {
 			}
 			else{
 				$response = $this->getFile($entry);
-				if(!$response->error->exists){
+				if(!$response->error->exist){
 					$entry = $response->result->set;
 					$this->em->remove($entry);
 					$countDeleted++;
@@ -138,7 +138,7 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @param           mixed           $folder
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFileUploadFolder($folder){
 		return $this->deleteFileUploadFolders(array($folder));
@@ -147,7 +147,7 @@ class FileManagementModel extends CoreModel {
 	 * @name 			deleteFileUploadFolders()
 	 *
 	 * @since			1.0.0
-	 * @version         1.0.5
+	 * @version         1.0.8
 	 *
 	 * @author          Can Berkol
 	 *
@@ -155,7 +155,7 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @param           array           $collection
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFileUploadFolders($collection) {
 		$timeStamp = time();
@@ -170,7 +170,7 @@ class FileManagementModel extends CoreModel {
 			}
 			else{
 				$response = $this->getFileUploadFolder($entry);
-				if(!$response->error->exists){
+				if(!$response->error->exist){
 					$entry = $response->result->set;
 					$this->em->remove($entry);
 					$countDeleted++;
@@ -188,7 +188,7 @@ class FileManagementModel extends CoreModel {
 	 * @name 			doesFileExist()
 	 *
 	 * @since			1.0.0
-	 * @version         1.0.5
+	 * @version         1.0.8
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->getSite()
@@ -196,7 +196,7 @@ class FileManagementModel extends CoreModel {
 	 * @param           mixed           $file
 	 * @param           bool            $bypass         If set to true does not return response but only the result.
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function doesFileExist($file, $bypass = false) {
 		$timeStamp = time();
@@ -204,7 +204,7 @@ class FileManagementModel extends CoreModel {
 
 		$response = $this->getFile($file);
 
-		if ($response->error->exists) {
+		if ($response->error->exist) {
 			if($bypass){
 				return $exist;
 			}
@@ -223,7 +223,7 @@ class FileManagementModel extends CoreModel {
 	 * @name 			doesFileUploadFolderExist()
 	 *
 	 * @since			1.0.0
-	 * @version         1.0.5
+	 * @version         1.0.8
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->getSite()
@@ -231,7 +231,7 @@ class FileManagementModel extends CoreModel {
 	 * @param           mixed           $folder
 	 * @param           bool            $bypass         If set to true does not return response but only the result.
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function doesFileUploadFolderExist($folder, $bypass = false) {
 		$timeStamp = time();
@@ -239,7 +239,7 @@ class FileManagementModel extends CoreModel {
 
 		$response = $this->getFileUploadFolder($folder);
 
-		if ($response->error->exists) {
+		if ($response->error->exist) {
 			if($bypass){
 				return $exist;
 			}
@@ -267,7 +267,7 @@ class FileManagementModel extends CoreModel {
      *
      * @param           mixed           $file
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
 	public function getFile($file) {
 		$timeStamp = time();
@@ -309,7 +309,7 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @param           mixed   $folder
 	 *
-	 * @return          array   $response
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 *
 	 */
 	public function getFileUploadFolder($folder) {
@@ -344,7 +344,7 @@ class FileManagementModel extends CoreModel {
      *
      * @param           array           $file        Collection of entities or post data.
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertFile($file) {
         return $this->insertFiles(array($file));
@@ -361,7 +361,7 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @param           array           $collection
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertFiles($collection)	{
 		$timeStamp = time();
@@ -450,7 +450,7 @@ class FileManagementModel extends CoreModel {
      *
      * @param           array           $collection Collection of entities or post data.
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
 	public function insertFileLocalizations($collection) {
 		$timeStamp = time();
@@ -511,7 +511,7 @@ class FileManagementModel extends CoreModel {
 	 * @use             $this->insertFileUploadFolders()
 	 *
 	 * @param           mixed           $folder
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertFileUploadFolder($folder){
 		return $this->insertFileUploadFolders(array($folder));
@@ -520,14 +520,14 @@ class FileManagementModel extends CoreModel {
 	 * @name 			insertFileUploadFolders()
 	 *
 	 * @since			1.0.0
-	 * @version         1.0.5
+	 * @version         1.0.8
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
 	 *
 	 * @param           array           $collection      Collection of Site entities or array of site detais array.
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return         \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertFileUploadFolders($collection) {
 		$timeStamp = time();
@@ -551,7 +551,7 @@ class FileManagementModel extends CoreModel {
 						case 'site':
 							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
 							$response = $sModel->getSite($value);
-							if(!$response->error->exists){
+							if(!$response->error->exist){
 								$entity->$set($response->result->set);
 							}
 							unset($response, $sModel);
@@ -588,7 +588,7 @@ class FileManagementModel extends CoreModel {
      * @param           array           $sortOrder
      * @param           array           $limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
 	public function listFiles($filter = null, $sortOrder = null, $limit = null){
 		$timeStamp = time();
@@ -668,7 +668,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array 		$sortOrder
 	 * @param			array		$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
 
@@ -711,7 +711,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
     public function listFilesOfSite($site, $filter = null, $sortOrder = null, $limit = null) {
@@ -823,7 +823,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
      * 
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
     public function listFilesWithExtension($extension, $filter = null, $sortOrder = null, $limit = null) {
@@ -856,7 +856,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
      * 
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
 
     public function listFilesWithType($type, $filter = null, $sortOrder = null, $limit = null) {
@@ -895,7 +895,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
      * 
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
     public function listDocumentFiles($sortOrder = null, $limit = null) {
@@ -916,7 +916,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 *
 	 */
 	public function listFlashFiles($sortOrder = null, $limit = null) {
@@ -937,7 +937,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 *
 	 */
 	public function listImages($sortOrder = null, $limit = null) {
@@ -961,7 +961,7 @@ class FileManagementModel extends CoreModel {
      * @param           array 		$sortOrder
      * @param           array 		$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
 
@@ -1010,7 +1010,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 *
 	 */
 	public function listSoftwares($sortOrder = null, $limit = null) {
@@ -1031,7 +1031,7 @@ class FileManagementModel extends CoreModel {
 	 * @param			array		$sortOrder
 	 * @param			array		$limit
 	 *
-	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 *
 	 */
 	public function listVideos($sortOrder = null, $limit = null) {
@@ -1051,7 +1051,7 @@ class FileManagementModel extends CoreModel {
      * 
      * @param           mixed   $file     entity, id
      * 
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
     public function updateFile($file) {
@@ -1071,7 +1071,7 @@ class FileManagementModel extends CoreModel {
      *
      * @param           array   $collection
      * 
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
 	public function updateFiles($collection){
 		$timeStamp = time();
@@ -1179,7 +1179,7 @@ class FileManagementModel extends CoreModel {
      * 
      * @param           mixed   $folder
      * 
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
 
@@ -1200,7 +1200,7 @@ class FileManagementModel extends CoreModel {
 	 *
      * @param           mixed   $collection
      * 
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      * 
      */
 	public function updateFileUploadFolders($collection){
@@ -1270,6 +1270,12 @@ class FileManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.8                      13.07.2015
+ * Can Berkol
+ * **************************************
+ * BF :: $response->error->exists replaced with $response->error->exist.
+ *
  * **************************************
  * v1.0.7                      12.06.2015
  * Can Berkol
