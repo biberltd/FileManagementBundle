@@ -12,8 +12,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.8
- * @date        13.07.2015
+ * @version     1.0.9
+ * @date        15.07.2015
  *
  */
 
@@ -577,7 +577,7 @@ class FileManagementModel extends CoreModel {
      * @name            listFiles()
      *
      * @since		    1.0.0
-     * @version         1.0.5
+     * @version         1.0.9
      *
      * @author          Can Berkol
      * @author          Said Imamoglu
@@ -597,9 +597,9 @@ class FileManagementModel extends CoreModel {
 		}
 		$oStr = $wStr = $gStr = $fStr = '';
 
-		$qStr = 'SELECT '.$this->entity['f']['alias'].', '.$this->entity['f']['alias']
+		$qStr = 'SELECT '.$this->entity['f']['alias'].', '.$this->entity['fl']['alias']
 			.' FROM '.$this->entity['fl']['name'].' '.$this->entity['fl']['alias']
-			.' JOIN '.$this->entity['fl']['alias'].'.member '.$this->entity['f']['alias'];
+			.' JOIN '.$this->entity['fl']['alias'].'.file '.$this->entity['f']['alias'];
 
 		if(!is_null($sortOrder)){
 			foreach($sortOrder as $column => $direction){
@@ -1270,6 +1270,11 @@ class FileManagementModel extends CoreModel {
 }
 /**
  * Change Log
+ * **************************************
+ * v1.0.9                      15.07.2015
+ * Said İmamoğlu
+ * **************************************
+ * BF :: entity namespace problem fixed in listFiles()
  * **************************************
  * v1.0.8                      13.07.2015
  * Can Berkol
