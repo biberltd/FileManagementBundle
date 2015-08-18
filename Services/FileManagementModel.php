@@ -12,8 +12,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.9
- * @date        15.07.2015
+ * @version     1.1.0
+ * @date        18.08.2015
  *
  */
 
@@ -577,7 +577,7 @@ class FileManagementModel extends CoreModel {
      * @name            listFiles()
      *
      * @since		    1.0.0
-     * @version         1.0.9
+     * @version         1.1.0
      *
      * @author          Can Berkol
      * @author          Said Imamoglu
@@ -620,11 +620,15 @@ class FileManagementModel extends CoreModel {
 					case 'title':
 						$column = $this->entity['fl']['alias'].'.'.$column;
 						break;
+					default:
+						continue 2;
 				}
 				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
 			}
-			$oStr = rtrim($oStr, ', ');
-			$oStr = ' ORDER BY '.$oStr.' ';
+			if(!empty($oStr)){
+				$oStr = rtrim($oStr, ', ');
+				$oStr = ' ORDER BY '.$oStr.' ';
+			}
 		}
 
 		if(!is_null($filter)){
@@ -1271,10 +1275,17 @@ class FileManagementModel extends CoreModel {
 /**
  * Change Log
  * **************************************
+ * v1.1.0                      18.08.2015
+ * Can Berkol
+ * **************************************
+ * CR :: The way we handle order columns have been slightly modified to ignore non-matching columns.
+ *
+ * **************************************
  * v1.0.9                      15.07.2015
  * Said İmamoğlu
  * **************************************
  * BF :: entity namespace problem fixed in listFiles()
+ *
  * **************************************
  * v1.0.8                      13.07.2015
  * Can Berkol
