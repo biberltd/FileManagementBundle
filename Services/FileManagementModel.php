@@ -647,6 +647,7 @@ class FileManagementModel extends CoreModel {
 			$id = $entry->getFile()->getId();
 			if(!isset($unique[$id])){
 				$entities[] = $entry->getFile();
+				$unique[$id] = '';
 			}
 		}
 		$totalRows = count($entities);
