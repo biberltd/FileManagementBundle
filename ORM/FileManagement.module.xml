@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<skipper version="3.2.3.1247" mvc="Symfony2" orm="Doctrine2">
+<skipper version="3.2.4.1256" mvc="Symfony2" orm="Doctrine2">
   <module name="\FileManagementBundle" local-name="FileManagementBundle" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" local-namespace="BiberLtd\Bundle\FileManagementBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="9d574194-22af-4673-a2ee-bb67ec7d212e">
     <entity name="\BiberLtd\Bundle\FileManagementBundle\Entity\File" local-name="File" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" description="Stores information of uploaded files." uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a">
       <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="eb48c822-d519-40b2-846f-f8ee5774cb6c"/>
