@@ -431,7 +431,7 @@ class FileManagementModel extends CoreModel {
 		}
 		/** Now handle localizations */
 		if ($countInserts > 0 && $countLocalizations > 0) {
-			$response = $this->insertMemberLocalizations($localizations);
+			$response = $this->insertFileLocalizations($localizations);
 		}
 		if($countInserts > 0){
 			$this->em->flush();
