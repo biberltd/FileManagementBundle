@@ -1,22 +1,12 @@
 <?php
 /**
- * FileManagementModel
- *
- * @vendor      BiberLtd
- * @package		Core\Bundles\FileManagementBundle
- * @subpackage	Services
- * @name	    FileManagementModel
- *
  * @author		Can Berkol
- * @author      Said Imamoglu
  *
- * @copyright   Biber Ltd. (www.biberltd.com)
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @version     1.1.0
- * @date        18.08.2015
- *
+ * @date        22.12.2015
  */
-
 namespace BiberLtd\Bundle\FileManagementBundle\Services;
 
 /** Extends CoreModel */
@@ -71,36 +61,20 @@ class FileManagementModel extends CoreModel {
     }
 
 	/**
-	 * @name 			deleteFile()
+	 * @param mixed $file
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.5
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->deleteFiles()
-	 *
-	 * @param           mixed           $file
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFile($file){
 		return $this->deleteFiles(array($file));
 	}
+
 	/**
-	 * @name 			deleteFiles()
+	 * @param array $collection
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.8
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function deleteFiles($collection) {
+	public function deleteFiles(array $collection) {
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -127,37 +101,22 @@ class FileManagementModel extends CoreModel {
 
 		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			deleteFileUploadFolder()
+	 * @param mixed $folder
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.5
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->deleteFieUploadFolders()
-	 *
-	 * @param           mixed           $folder
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFileUploadFolder($folder){
 		return $this->deleteFileUploadFolders(array($folder));
 	}
+
 	/**
-	 * @name 			deleteFileUploadFolders()
+	 * @param array $collection
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.8
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function deleteFileUploadFolders($collection) {
+	public function deleteFileUploadFolders(array $collection) {
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -184,21 +143,14 @@ class FileManagementModel extends CoreModel {
 
 		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			doesFileExist()
+	 * @param mixed $file
+	 * @param bool $bypass
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.8
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->getSite()
-	 *
-	 * @param           mixed           $file
-	 * @param           bool            $bypass         If set to true does not return response but only the result.
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function doesFileExist($file, $bypass = false) {
+	public function doesFileExist($file, \bool $bypass = false) {
 		$timeStamp = time();
 		$exist = false;
 
@@ -219,21 +171,14 @@ class FileManagementModel extends CoreModel {
 		}
 		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			doesFileUploadFolderExist()
+	 * @param mixed $folder
+	 * @param bool $bypass
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.8
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->getSite()
-	 *
-	 * @param           mixed           $folder
-	 * @param           bool            $bypass         If set to true does not return response but only the result.
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function doesFileUploadFolderExist($folder, $bypass = false) {
+	public function doesFileUploadFolderExist($folder, \bool $bypass = false) {
 		$timeStamp = time();
 		$exist = false;
 
@@ -254,21 +199,12 @@ class FileManagementModel extends CoreModel {
 		}
 		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
-    /**
-     * @name            getFile()
-     *
-     * @since			1.0.0
-     * @version         1.0.4
+
+	/**
+	 * @param mixed $file
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->createException()
-     *
-     * @param           mixed           $file
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     */
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
 	public function getFile($file) {
 		$timeStamp = time();
 		if($file instanceof BundleEntity\File){
@@ -295,22 +231,11 @@ class FileManagementModel extends CoreModel {
 
 		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name            getFileUploadFolder()
+	 * @param mixed $folder
 	 *
-	 * @since           1.0.0
-	 * @version         1.0.5
-	 *
-	 * @author          Can Berkol
-	 * @author          Said Imamoglu
-	 *
-	 * @use             $this->createException()
-	 *
-	 *
-	 * @param           mixed   $folder
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getFileUploadFolder($folder) {
 		$timeStamp = time();
@@ -332,38 +257,22 @@ class FileManagementModel extends CoreModel {
 
 		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
-    /**
-     * @name 		    insertFile()
-     *
-     * @since		    1.0.1
-     * @version         1.0.5
-     * @author          Said Imamoglu
-     * @author          Can Berkol
-     *
-     * @use             $this->insertFiles()
-     *
-     * @param           array           $file        Collection of entities or post data.
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     */
+
+	/**
+	 * @param mixed $file
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
     public function insertFile($file) {
         return $this->insertFiles(array($file));
     }
+
 	/**
-	 * @name            insertFiles()
+	 * @param array $collection
 	 *
-	 * @since           1.0.1
-	 * @version         1.0.5
-	 * @author          Said Imamoglu
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function insertFiles($collection)	{
+	public function insertFiles(array $collection)	{
 		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
@@ -439,20 +348,13 @@ class FileManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
-    /**
-     * @name            insertFileLocalizations()
-     *
-     * @since           1.0.4
-     * @version         1.0.7
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array           $collection Collection of entities or post data.
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     */
-	public function insertFileLocalizations($collection) {
+
+	/**
+	 * @param array $collection
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function insertFileLocalizations(array $collection) {
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -501,35 +403,22 @@ class FileManagementModel extends CoreModel {
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
+
 	/**
-	 * @name 			insertFileUploadFolder()
+	 * @param mixed $folder
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.5
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->insertFileUploadFolders()
-	 *
-	 * @param           mixed           $folder
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertFileUploadFolder($folder){
 		return $this->insertFileUploadFolders(array($folder));
 	}
+
 	/**
-	 * @name 			insertFileUploadFolders()
+	 * @param array $collection
 	 *
-	 * @since			1.0.0
-	 * @version         1.0.8
-	 * @author          Can Berkol
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array           $collection      Collection of Site entities or array of site detais array.
-	 *
-	 * @return         \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function insertFileUploadFolders($collection) {
+	public function insertFileUploadFolders(array $collection) {
 		$timeStamp = time();
 		if (!is_array($collection)) {
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -573,24 +462,10 @@ class FileManagementModel extends CoreModel {
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
 
-    /**
-     * @name            listFiles()
+    /*
      *
-     * @since		    1.0.0
-     * @version         1.1.0
-     *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->createException()
-     *
-     * @param           mixed           $filter
-     * @param           array           $sortOrder
-     * @param           array           $limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-	public function listFiles($filter = null, $sortOrder = null, $limit = null){
+	public function listFiles(array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = time();
 		if(!is_array($sortOrder) && !is_null($sortOrder)){
 			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -657,27 +532,15 @@ class FileManagementModel extends CoreModel {
 		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
 
-    /**
-     * @name            listFilesInFolder()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+	/**
+	 * @param mixed $folder
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->listFiles()
-     * 
-     * @param           mixed		$folder
-     * @param           array 		$filter
-	 * @param			array 		$sortOrder
-	 * @param			array		$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
-
-    public function listFilesInFolder($folder, $filter = null, $sortOrder = null, $limit = null) {
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+    public function listFilesInFolder($folder, array $filter = null, array $sortOrder = null, array $limit = null) {
 		$timeStamp = time();
 		$response = $this->getFileUploadFolder($folder);
 		if($response->error->exist){
@@ -699,27 +562,15 @@ class FileManagementModel extends CoreModel {
 		return $response;
     }
 
-    /**
-     * @name            listFilesOfSite()
-     *                  Lists files of a given site
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+	/**
+	 * @param mixed $site
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->listFiles()
-     * 
-     * @param           mixed		$site
-	 * @param			array		$filter
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
-    public function listFilesOfSite($site, $filter = null, $sortOrder = null, $limit = null) {
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+    public function listFilesOfSite($site, array $filter = null, array $sortOrder = null, array $limit = null) {
 		$timeStamp = time();
 		$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
 		$response = $sModel->getSite($site);
@@ -741,25 +592,15 @@ class FileManagementModel extends CoreModel {
 
 		return $response;
     }
+
 	/**
-	 * @name            listFileUploadFolders()
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since           1.0.0
-	 * @version         1.0.5
-	 *
-	 * @author          Can Berkol
-	 * @author          Said Imamoglu
-	 *
-	 * @use             $this->createException()
-	 *
-	 * @param           array   $filter
-	 * @param			array	$sortOrder
-	 * @param			array	$limit
-	 *
-	 * @return          array   $response
-	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listFileUploadFolders($filter = null, $sortOrder = null, $limit = null) {
+	public function listFileUploadFolders(array $filter = null, array $sortOrder = null, array $limit = null) {
 		$timeStamp = time();
 		if (!is_array($sortOrder) && !is_null($sortOrder)) {
 			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -812,26 +653,16 @@ class FileManagementModel extends CoreModel {
 		}
 		return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
-    /**
-     * @name            listFilesWithExtension()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+
+	/**
+	 * @param mixed $extension
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoğlu
-     *
-     * @use             $this->listFiles()
-     * 
-     * @param           string		$extension
-	 * @param			array		$filter
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-     * 
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
-    public function listFilesWithExtension($extension, $filter = null, $sortOrder = null, $limit = null) {
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+    public function listFilesWithExtension($extension, array $filter = null, array $sortOrder = null, array $limit = null) {
         if (!is_string($extension)) {
 			return $this->createException('InvalidParameterValueException', 'Extension must be a string.', 'E:S:007');
         }
@@ -845,26 +676,15 @@ class FileManagementModel extends CoreModel {
         return $this->listFiles($filter, $sortOrder, $limit);
     }
 
-    /**
-     * @name            listFilesWithType()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+	/**
+	 * @param mixed $type
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->listFiles()
-     * 
-     * @param           string		$type
-	 * @param			array		$filter
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-     * 
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     */
-
-    public function listFilesWithType($type, $filter = null, $sortOrder = null, $limit = null) {
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+    public function listFilesWithType($type, array $filter = null, array $sortOrder = null, array $limit = null) {
 		$timeStamp = time();
 		$typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's');
         if(!in_array($type, $typeOpts)){
@@ -886,91 +706,45 @@ class FileManagementModel extends CoreModel {
 		return $response;
     }
 
-    /**
-     * @name            listDocuments()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+	/**
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->listFilesWithType()
-     *
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-     * 
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
-    public function listDocumentFiles($sortOrder = null, $limit = null) {
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+    public function listDocumentFiles(array $sortOrder = null, array $limit = null) {
         return $this->listFilesWithType('d', $sortOrder, $limit);
     }
 
 	/**
-	 * @name            listFlashFiles()
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since           1.0.0
-	 * @version         1.0.5
-	 *
-	 * @author          Can Berkol
-	 * @author          Said Imamoglu
-	 *
-	 * @use             $this->listFilesWithType()
-	 *
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listFlashFiles($sortOrder = null, $limit = null) {
+	public function listFlashFiles(array $sortOrder = null, array $limit = null) {
 		return $this->listFilesWithType('f', $sortOrder, $limit);
 	}
 
 	/**
-	 * @name            listImages()
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since           1.0.0
-	 * @version         1.0.5
-	 *
-	 * @author          Can Berkol
-	 * @author          Said Imamoglu
-	 *
-	 * @use             $this->listFilesWithType()
-	 *
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listImages($sortOrder = null, $limit = null) {
+	public function listImages(array $sortOrder = null, array $limit = null) {
 		return $this->listFilesWithType('i', $sortOrder, $limit);
 	}
 
-    /**
-     * @name            listImagesWithDimension()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+	/**
+	 * @param            $width
+	 * @param            $height
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->createException()
-     * @use             $this->listFiles()
-     * 
-     * @param           integer 	$width
-     * @param           integer 	$height
-     * @param           array 		$sortOrder
-     * @param           array 		$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
-
-    public function listImagesWithDimension($width, $height, $sortOrder = null, $limit = null) {
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+    public function listImagesWithDimension($width, $height, array $sortOrder = null, array $limit = null) {
 		$timeStamp = time();
         if (!is_integer($width) || !is_integer($height)) {
             return $this->createException('InvalidParameterValueException', '$width and $height parameters must be integers.', 'E:S:008');
@@ -1002,83 +776,40 @@ class FileManagementModel extends CoreModel {
     }
 
 	/**
-	 * @name            listSoftwares()
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since           1.0.0
-	 * @version         1.0.5
-	 *
-	 * @author          Can Berkol
-	 * @author          Said Imamoglu
-	 *
-	 * @use             $this->listFilesWithType()
-	 *
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listSoftwares($sortOrder = null, $limit = null) {
+	public function listSoftwares(array $sortOrder = null, array $limit = null) {
 		return $this->listFilesWithType('s', $sortOrder, $limit);
 	}
 
 	/**
-	 * @name            listVideos()
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
 	 *
-	 * @since           1.0.0
-	 * @version         1.0.5
-	 *
-	 * @author          Can Berkol
-	 * @author          Said Imamoglu
-	 *
-	 * @use             $this->listFilesWithType()
-	 *
-	 * @param			array		$sortOrder
-	 * @param			array		$limit
-	 *
-	 * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listVideos($sortOrder = null, $limit = null) {
+	public function listVideos(array $sortOrder = null, array $limit = null) {
 		return $this->listFilesWithType('v', $sortOrder, $limit);
 	}
-    /**
-     * @name            updateFile()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+
+	/**
+	 * @param $file
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->resetResponse()
-     * @use             $this->updateFiles()
-     * 
-     * @param           mixed   $file     entity, id
-     * 
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
     public function updateFile($file) {
         return $this->updateFiles(array($file));
     }
 
-    /**
-     * @name            updateFiles()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
-     *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->createException()
-     *
-     * @param           array   $collection
-     * 
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     */
-	public function updateFiles($collection){
+	/**
+	 * @param array $collection
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function updateFiles(array $collection){
 		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
@@ -1170,45 +901,21 @@ class FileManagementModel extends CoreModel {
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
 	}
 
-
-    /**
-     * @name            updateFileUploadFolder()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+	/**
+	 * @param mixed $folder
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->updateFileUploadFolders()
-     * 
-     * @param           mixed   $folder
-     * 
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
-
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
     public function updateFileUploadFolder($folder) {
         return $this->updateFileUploadFolders(array($folder));
     }
 
-    /**
-     * @name            updateFileUploadFolders()
-     * 
-     * @since           1.0.0
-     * @version         1.0.5
+	/**
+	 * @param array $collection
 	 *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @use             $this->createException()
-	 *
-     * @param           mixed   $collection
-     * 
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
-     * 
-     */
-	public function updateFileUploadFolders($collection){
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function updateFileUploadFolders(array $collection){
 		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
@@ -1273,92 +980,3 @@ class FileManagementModel extends CoreModel {
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
 	}
 }
-/**
- * Change Log
- * **************************************
- * v1.1.0                      18.08.2015
- * Can Berkol
- * **************************************
- * CR :: The way we handle order columns have been slightly modified to ignore non-matching columns.
- *
- * **************************************
- * v1.0.9                      15.07.2015
- * Said İmamoğlu
- * **************************************
- * BF :: entity namespace problem fixed in listFiles()
- *
- * **************************************
- * v1.0.8                      13.07.2015
- * Can Berkol
- * **************************************
- * BF :: $response->error->exists replaced with $response->error->exist.
- *
- * **************************************
- * v1.0.7                      12.06.2015
- * Can Berkol
- * **************************************
- * BF :: insertFileLocalizations() rewritten.
- * CR :: getFile() now returns files based on source_original and source_preview keys.
- *
- * **************************************
- * v1.0.6                      25.05.2015
- * Can Berkol
- * **************************************
- * BF :: db_connection is replaced with dbConnection
- *
- * **************************************
- * v1.0.5                      03.05.2015
- * Can Berkol
- * **************************************
- * CR :: Made compatible with CoreBundle v3.3.
- *
- * **************************************
- * v1.0.4                      Can Berkol
- * 17.07.2014
- * **************************************
- * A insertFileLocalizations()
- * U listFiles()
- *
- * **************************************
- * v1.0.2                      Can Berkol
- * 22.03.2014
- * **************************************
- * U updateFile()
- * U updateFiles()
- *
- * **************************************
- * v1.0.0                      Said Imamoglu
- * 15.11.2013
- * **************************************
- * A deleteFile()
- * A deleteFiles()
- * A doesFileExist()
- * A getFile()
- * A insertFile()
- * A insertFiles()
- * A listFiles
- * A listFilesInFolders()
- * A listFilesOfSite()
- * A listFilesWithExtension()
- * A listFilesWithType()
- * A listDocumentFiles()
- * A listFlashFiles()
- * A listImageFiles()
- * A listImageFilesWithDimension()
- * A listSoftwareFiles()
- * A listVideoFiles()
- * A updateFile()
- * A updateFiles()
- * A deleteFileUploadFolder()
- * A doesFileUploadFolderExist()
- * A getFileUploadFolder()
- * A insertFileUploadFolder()
- * A insertFileUploadFolders()
- * A listFileUploadFolders()
- * A listFileUploadFoldersWithLessFilesThan()
- * A listFileUploadFoldersWithMoreFilesThan()
- * A updateFileUploadFolder()
- * A updateFileUploadFolders()
- * 
- * 
- */

@@ -1,18 +1,11 @@
 <?php
 /**
- * @name        FileLocalization
- * @package		BiberLtd\Bundle\CoreBundle\FileManagementBundle
+ * @author		Can Berkol
  *
- * @author      Can Berkol
- * @author		Murat Ünal
- * @version     1.0.1
- * @date        03.05.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        22.12.2015
  */
 namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
@@ -30,11 +23,13 @@ class FileLocalization extends CoreEntity
 {
     /**
      * @ORM\Column(type="string", length=155, nullable=false)
+     * @var string
      */
     private $title;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @var string
      */
     private $description;
 
@@ -42,6 +37,7 @@ class FileLocalization extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File", inversedBy="localizations")
      * @ORM\JoinColumn(name="file", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\FileManagementBundle\Entity\File
      */
     private $file;
 
@@ -49,24 +45,16 @@ class FileLocalization extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     private $language;
 
     /**
-     * @name            setDescription ()
-	 *
-     * @author          Can Berkol
+     * @param string $description
      *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $description
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setDescription($description) {
+    public function setDescription(\string $description) {
         if($this->setModified('description', $description)->isModified()) {
             $this->description = $description;
         }
@@ -75,34 +63,18 @@ class FileLocalization extends CoreEntity
     }
 
     /**
-     * @name            getDescription ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->description
+     * @return string
      */
     public function getDescription() {
         return $this->description;
     }
 
     /**
-     * @name            setFile ()
-	 *
-     * @author          Can Berkol
+     * @param \BiberLtd\Bundle\FileManagementBundle\Entity\File $file
      *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $file
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setFile($file) {
+    public function setFile(\BiberLtd\Bundle\FileManagementBundle\Entity\File $file) {
         if($this->setModified('file', $file)->isModified()) {
             $this->file = $file;
         }
@@ -111,34 +83,18 @@ class FileLocalization extends CoreEntity
     }
 
     /**
-     * @name            getFile ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->file
+     * @return \BiberLtd\Bundle\FileManagementBundle\Entity\File
      */
     public function getFile() {
         return $this->file;
     }
 
     /**
-     * @name            setLanguage ()
-	 *
-     * @author          Can Berkol
+     * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
      *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $language
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setLanguage($language) {
+    public function setLanguage(\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language) {
         if($this->setModified('language', $language)->isModified()) {
             $this->language = $language;
         }
@@ -147,34 +103,18 @@ class FileLocalization extends CoreEntity
     }
 
     /**
-     * @name            getLanguage ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->language
+     * @return \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     public function getLanguage() {
         return $this->language;
     }
 
     /**
-     * @name            setTitle ()
-	 *
-     * @author          Can Berkol
+     * @param string $title
      *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $title
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setTitle($title) {
+    public function setTitle(\string $title) {
         if($this->setModified('title', $title)->isModified()) {
             $this->title = $title;
         }
@@ -183,25 +123,9 @@ class FileLocalization extends CoreEntity
     }
 
     /**
-     * @name            getTitle ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->title
+     * @return string
      */
     public function getTitle() {
         return $this->title;
     }
 }
-
-/**
- * Change Log:
- * **************************************
- * v1.0.1                      03.05.2015
- * Can Berkol
- * **************************************
- * CR :: ORM updates.
- */

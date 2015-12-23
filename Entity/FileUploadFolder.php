@@ -1,17 +1,11 @@
 <?php
 /**
- * @name        FileUploadFolder
- * @package		BiberLtd\Bundle\CoreBundle\FileManagementBundle
+ * @author		Can Berkol
  *
- * @author		Murat Ünal
- * @version     1.0.2
- * @date        03.05.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        22.12.2015
  */
 namespace BiberLtd\Bundle\FileManagementBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -39,129 +33,126 @@ class FileUploadFolder extends CoreEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="string", length=155, nullable=false)
+     * @var string
      */
     private $name;
 
     /** 
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @var string
      */
     private $url_key;
 
     /** 
      * @ORM\Column(type="text", nullable=false)
+     * @var string
      */
     private $path_absolute;
 
     /** 
      * @ORM\Column(type="text", nullable=true)
+     * @var string
      */
     private $url;
 
     /** 
      * @ORM\Column(type="string", length=1, nullable=false, options={"default":"i"})
+     * @var string
      */
     private $type;
 
     /** 
      * @ORM\Column(type="decimal", length=5, nullable=true)
+     * @var float
      */
     private $allowed_max_size;
 
     /** 
      * @ORM\Column(type="decimal", length=5, nullable=true)
+     * @var float
      */
     private $allowed_min_size;
 
     /** 
      * @ORM\Column(type="integer", length=5, nullable=true)
+     * @var float
      */
     private $allowed_max_width;
 
     /** 
      * @ORM\Column(type="integer", length=5, nullable=true)
+     * @var float
      */
     private $allowed_min_width;
 
     /** 
      * @ORM\Column(type="integer", length=5, nullable=true)
+     * @var float
      */
     private $allowed_max_height;
 
     /** 
      * @ORM\Column(type="integer", length=5, nullable=true)
+     * @var float
      */
     private $allowed_min_height;
 
     /** 
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     * @var int
      */
     private $count_files;
 
 	/**
 	 * @ORM\Column(type="datetime", nullable=false)
+	 * @var \DateTime
 	 */
 	public $date_added;
 
 	/**
 	 * @ORM\Column(type="datetime", nullable=false)
+	 * @var \DateTime
 	 */
 	public $date_updated;
 
 	/**
 	 * @ORM\Column(type="datetime", nullable=true)
+	 * @var \DateTime
 	 */
 	public $date_removed;
 
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File", mappedBy="folder")
+     * @var array
      */
     private $files;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
      */
     private $site;
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
 
-    /**
-     * @name            getId()
-     *                  Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          string          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name                  setAllowedMaxHeight ()
-     *                                            Sets the allowed_max_height property.
-     *                                            Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $allowed_max_height
-     *
-     * @return          object                $this
-     */
-    public function setAllowedMaxHeight($allowed_max_height) {
+	/**
+	 * @param float $allowed_max_height
+	 *
+	 * @return $this
+	 */
+    public function setAllowedMaxHeight(\float $allowed_max_height) {
         if(!$this->setModified('allowed_max_height', $allowed_max_height)->isModified()) {
             return $this;
         }
@@ -169,38 +160,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAllowedMaxHeight ()
-     *                                      Returns the value of allowed_max_height property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->allowed_max_height
-     */
+	/**
+	 * @return float
+	 */
     public function getAllowedMaxHeight() {
         return $this->allowed_max_height;
     }
 
-    /**
-     * @name                  setAllowedMaxSize ()
-     *                                          Sets the allowed_max_size property.
-     *                                          Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $allowed_max_size
-     *
-     * @return          object                $this
-     */
-    public function setAllowedMaxSize($allowed_max_size) {
+	/**
+	 * @param float $allowed_max_size
+	 *
+	 * @return $this
+	 */
+    public function setAllowedMaxSize(\float $allowed_max_size) {
         if(!$this->setModified('allowed_max_size', $allowed_max_size)->isModified()) {
             return $this;
         }
@@ -208,38 +180,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAllowedMaxSize ()
-     *                                    Returns the value of allowed_max_size property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->allowed_max_size
-     */
+	/**
+	 * @return float
+	 */
     public function getAllowedMaxSize() {
         return $this->allowed_max_size;
     }
 
-    /**
-     * @name                  setAllowedMaxWidth ()
-     *                                           Sets the allowed_max_width property.
-     *                                           Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $allowed_max_width
-     *
-     * @return          object                $this
-     */
-    public function setAllowedMaxWidth($allowed_max_width) {
+	/**
+	 * @param float $allowed_max_width
+	 *
+	 * @return $this
+	 */
+    public function setAllowedMaxWidth(\float $allowed_max_width) {
         if(!$this->setModified('allowed_max_width', $allowed_max_width)->isModified()) {
             return $this;
         }
@@ -247,38 +200,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAllowedMaxWidth ()
-     *                                     Returns the value of allowed_max_width property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->allowed_max_width
-     */
+	/**
+	 * @return float
+	 */
     public function getAllowedMaxWidth() {
         return $this->allowed_max_width;
     }
 
-    /**
-     * @name                  setAllowedMinHeight ()
-     *                                            Sets the allowed_min_height property.
-     *                                            Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $allowed_min_height
-     *
-     * @return          object                $this
-     */
-    public function setAllowedMinHeight($allowed_min_height) {
+	/**
+	 * @param float $allowed_min_height
+	 *
+	 * @return $this
+	 */
+    public function setAllowedMinHeight(\float $allowed_min_height) {
         if(!$this->setModified('allowed_min_height', $allowed_min_height)->isModified()) {
             return $this;
         }
@@ -286,38 +220,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAllowedMinHeight ()
-     *                                      Returns the value of allowed_min_height property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->allowed_min_height
-     */
+	/**
+	 * @return float
+	 */
     public function getAllowedMinHeight() {
         return $this->allowed_min_height;
     }
 
-    /**
-     * @name                  setAllowedMinSize ()
-     *                                          Sets the allowed_min_size property.
-     *                                          Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $allowed_min_size
-     *
-     * @return          object                $this
-     */
-    public function setAllowedMinSize($allowed_min_size) {
+	/**
+	 * @param float $allowed_min_size
+	 *
+	 * @return $this
+	 */
+    public function setAllowedMinSize(\float $allowed_min_size) {
         if(!$this->setModified('allowed_min_size', $allowed_min_size)->isModified()) {
             return $this;
         }
@@ -325,38 +240,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAllowedMinSize ()
-     *                                    Returns the value of allowed_min_size property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->allowed_min_size
-     */
+	/**
+	 * @return float
+	 */
     public function getAllowedMinSize() {
         return $this->allowed_min_size;
     }
 
-    /**
-     * @name                  setAllowedMinWidth ()
-     *                                           Sets the allowed_min_width property.
-     *                                           Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $allowed_min_width
-     *
-     * @return          object                $this
-     */
-    public function setAllowedMinWidth($allowed_min_width) {
+	/**
+	 * @param float $allowed_min_width
+	 *
+	 * @return $this
+	 */
+    public function setAllowedMinWidth(\float $allowed_min_width) {
         if(!$this->setModified('allowed_min_width', $allowed_min_width)->isModified()) {
             return $this;
         }
@@ -364,38 +260,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAllowedMinWidth ()
-     *                                     Returns the value of allowed_min_width property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->allowed_min_width
-     */
+	/**
+	 * @return float
+	 */
     public function getAllowedMinWidth() {
         return $this->allowed_min_width;
     }
 
-    /**
-     * @name                  setCountFiles ()
-     *                                      Sets the count_files property.
-     *                                      Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $count_files
-     *
-     * @return          object                $this
-     */
-    public function setCountFiles($count_files) {
+	/**
+	 * @param int $count_files
+	 *
+	 * @return $this
+	 */
+    public function setCountFiles(\integer $count_files) {
         if(!$this->setModified('count_files', $count_files)->isModified()) {
             return $this;
         }
@@ -403,38 +280,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getCountFiles ()
-     *                                Returns the value of count_files property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->count_files
-     */
+	/**
+	 * @return int
+	 */
     public function getCountFiles() {
         return $this->count_files;
     }
 
-    /**
-     * @name                  setFiles ()
-     *                                 Sets the files property.
-     *                                 Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $files
-     *
-     * @return          object                $this
-     */
-    public function setFiles($files) {
+	/**
+	 * @param array $files
+	 *
+	 * @return $this
+	 */
+    public function setFiles(array $files) {
         if(!$this->setModified('files', $files)->isModified()) {
             return $this;
         }
@@ -457,23 +315,12 @@ class FileUploadFolder extends CoreEntity
         return $this->files;
     }
 
-    /**
-     * @name                  setName ()
-     *                                Sets the name property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $name
-     *
-     * @return          object                $this
-     */
-    public function setName($name) {
+	/**
+	 * @param string $name
+	 *
+	 * @return $this
+	 */
+    public function setName(\string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -481,38 +328,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getName ()
-     *                          Returns the value of name property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->name
-     */
+	/**
+	 * @return string
+	 */
     public function getName() {
         return $this->name;
     }
 
-    /**
-     * @name                  setPathAbsolute ()
-     *                                        Sets the path_absolute property.
-     *                                        Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $path_absolute
-     *
-     * @return          object                $this
-     */
-    public function setPathAbsolute($path_absolute) {
+	/**
+	 * @param string $path_absolute
+	 *
+	 * @return $this
+	 */
+    public function setPathAbsolute(\string $path_absolute) {
         if(!$this->setModified('path_absolute', $path_absolute)->isModified()) {
             return $this;
         }
@@ -520,38 +348,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPathAbsolute ()
-     *                                  Returns the value of path_absolute property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->path_absolute
-     */
+	/**
+	 * @return string
+	 */
     public function getPathAbsolute() {
         return $this->path_absolute;
     }
 
-    /**
-     * @name                  setSite ()
-     *                                Sets the site property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $site
-     *
-     * @return          object                $this
-     */
-    public function setSite($site) {
+	/**
+	 * @param \BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site
+	 *
+	 * @return $this
+	 */
+    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site) {
         if(!$this->setModified('site', $site)->isModified()) {
             return $this;
         }
@@ -559,38 +368,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getSite ()
-     *                          Returns the value of site property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->site
-     */
+	/**
+	 * @return \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
+	 */
     public function getSite() {
         return $this->site;
     }
 
-    /**
-     * @name                  setType ()
-     *                                Sets the type property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $type
-     *
-     * @return          object                $this
-     */
-    public function setType($type) {
+	/**
+	 * @param string $type
+	 *
+	 * @return $this
+	 */
+    public function setType(\string $type) {
         if(!$this->setModified('type', $type)->isModified()) {
             return $this;
         }
@@ -598,37 +388,18 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getType ()
-     *                          Returns the value of type property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->type
-     */
+	/**
+	 * @return string
+	 */
     public function getType() {
         return $this->type;
     }
 
-    /**
-     * @name                  setUrl ()
-     *                               Sets the url property.
-     *                               Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $url
-     *
-     * @return          object                $this
-     */
+	/**
+	 * @param $url
+	 *
+	 * @return $this
+	 */
     public function setUrl($url) {
         if(!$this->setModified('url', $url)->isModified()) {
             return $this;
@@ -637,38 +408,19 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getUrl ()
-     *                         Returns the value of url property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->url
-     */
+	/**
+	 * @return string
+	 */
     public function getUrl() {
         return $this->url;
     }
 
-    /**
-     * @name                  setUrlKey ()
-     *                                  Sets the url_key property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $url_key
-     *
-     * @return          object                $this
-     */
-    public function setUrlKey($url_key) {
+	/**
+	 * @param string $url_key
+	 *
+	 * @return $this
+	 */
+    public function setUrlKey(\string $url_key) {
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
@@ -676,59 +428,10 @@ class FileUploadFolder extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getUrlKey ()
-     *                            Returns the value of url_key property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->url_key
-     */
+	/**
+	 * @return string
+	 */
     public function getUrlKey() {
         return $this->url_key;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.2                      03.05.2015
- * Can Berkol
- * **************************************
- * CR :: ORM updates.
- *
- * **************************************
- * v1.0.1                      Murat Ünal
- * 09.09.2013
- * **************************************
- * A getAllowedMaxWidth()
- * A getAllowedMaxHeight()
- * A getAllowedMaxSize()
- * A getAllowedMinHeight()
- * A getAllowedMinWidth()
- * A getCountFiles()
- * A getFile()
- * A getId()
- * A getName()
- * A getPathAbsolute()
- * A getSite()
- * A getType()
- * A getUrl()
- * A getUrlKey()
- * A setAllowedMaxWidth()
- * A setAllowedMaxHeight()
- * A setAllowedMaxSize()
- * A setAllowedMinHeight()
- * A setAllowedMinWidth()
- * A setCountFiles()
- * A setFile()
- * A setName()
- * A setPathAbsolute()
- * A setSite()
- * A setType()
- * A setUrl()
- * A setUrlKey()
- *
- */
