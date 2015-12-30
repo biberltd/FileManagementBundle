@@ -597,7 +597,7 @@ class FileManagementModel extends CoreModel {
 		}
 		$oStr = $wStr = $gStr = $fStr = '';
 
-		$qStr = 'SELECT '.$this->entity['f']['alias'].', '.$this->entity['fl']['alias']
+		$qStr = 'SELECT '.$this->entity['fl']['alias']
 			.' FROM '.$this->entity['fl']['name'].' '.$this->entity['fl']['alias']
 			.' JOIN '.$this->entity['fl']['alias'].'.file '.$this->entity['f']['alias'];
 
