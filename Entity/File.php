@@ -163,7 +163,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setExtension(\string $extension) {
+    public function setExtension(string $extension) {
         if(!$this->setModified('extension', $extension)->isModified()) {
             return $this;
         }
@@ -183,7 +183,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setFolder(\string $folder) {
+    public function setFolder(string $folder) {
         if(!$this->setModified('folder', $folder)->isModified()) {
             return $this;
         }
@@ -203,7 +203,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setHeight(\integer $height) {
+    public function setHeight(int $height) {
         if(!$this->setModified('height', $height)->isModified()) {
             return $this;
         }
@@ -223,7 +223,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setMimeType(\string $mime_type) {
+    public function setMimeType(string $mime_type) {
         if(!$this->setModified('mime_type', $mime_type)->isModified()) {
             return $this;
         }
@@ -243,7 +243,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setName(\string $name) {
+    public function setName(string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -283,7 +283,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setSize(\float $size) {
+    public function setSize(float $size) {
         if(!$this->setModified('size', $size)->isModified()) {
             return $this;
         }
@@ -303,7 +303,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setSourceOriginal(\string $source_original) {
+    public function setSourceOriginal(string $source_original) {
         if(!$this->setModified('source_original', $source_original)->isModified()) {
             return $this;
         }
@@ -323,7 +323,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setSourcePreview(\string $source_preview) {
+    public function setSourcePreview(string $source_preview) {
         if(!$this->setModified('source_preview', $source_preview)->isModified()) {
             return $this;
         }
@@ -343,7 +343,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setType(\string $type) {
+    public function setType(string $type) {
         if(!$this->setModified('type', $type)->isModified()) {
             return $this;
         }
@@ -363,7 +363,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setUrlKey(\string $url_key) {
+    public function setUrlKey(string $url_key) {
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
@@ -383,7 +383,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setWidth(\integer $width) {
+    public function setWidth(int $width) {
         if(!$this->setModified('width', $width)->isModified()) {
             return $this;
         }
@@ -410,7 +410,7 @@ class File extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setExif(\string $exif) {
+    public function setExif(string $exif) {
         if($this->setModified('exif', $exif)->isModified()) {
             $this->exif = $exif;
         }

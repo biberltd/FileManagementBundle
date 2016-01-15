@@ -152,7 +152,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setAllowedMaxHeight(\float $allowed_max_height) {
+    public function setAllowedMaxHeight(float $allowed_max_height) {
         if(!$this->setModified('allowed_max_height', $allowed_max_height)->isModified()) {
             return $this;
         }
@@ -172,7 +172,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setAllowedMaxSize(\float $allowed_max_size) {
+    public function setAllowedMaxSize(float $allowed_max_size) {
         if(!$this->setModified('allowed_max_size', $allowed_max_size)->isModified()) {
             return $this;
         }
@@ -192,7 +192,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setAllowedMaxWidth(\float $allowed_max_width) {
+    public function setAllowedMaxWidth(float $allowed_max_width) {
         if(!$this->setModified('allowed_max_width', $allowed_max_width)->isModified()) {
             return $this;
         }
@@ -212,7 +212,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setAllowedMinHeight(\float $allowed_min_height) {
+    public function setAllowedMinHeight(float $allowed_min_height) {
         if(!$this->setModified('allowed_min_height', $allowed_min_height)->isModified()) {
             return $this;
         }
@@ -232,7 +232,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setAllowedMinSize(\float $allowed_min_size) {
+    public function setAllowedMinSize(float $allowed_min_size) {
         if(!$this->setModified('allowed_min_size', $allowed_min_size)->isModified()) {
             return $this;
         }
@@ -252,7 +252,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setAllowedMinWidth(\float $allowed_min_width) {
+    public function setAllowedMinWidth(float $allowed_min_width) {
         if(!$this->setModified('allowed_min_width', $allowed_min_width)->isModified()) {
             return $this;
         }
@@ -272,7 +272,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setCountFiles(\integer $count_files) {
+    public function setCountFiles(int $count_files) {
         if(!$this->setModified('count_files', $count_files)->isModified()) {
             return $this;
         }
@@ -320,7 +320,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setName(\string $name) {
+    public function setName(string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -340,7 +340,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setPathAbsolute(\string $path_absolute) {
+    public function setPathAbsolute(string $path_absolute) {
         if(!$this->setModified('path_absolute', $path_absolute)->isModified()) {
             return $this;
         }
@@ -380,7 +380,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setType(\string $type) {
+    public function setType(string $type) {
         if(!$this->setModified('type', $type)->isModified()) {
             return $this;
         }
@@ -420,7 +420,7 @@ class FileUploadFolder extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setUrlKey(\string $url_key) {
+    public function setUrlKey(string $url_key) {
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }

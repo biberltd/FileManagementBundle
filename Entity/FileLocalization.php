@@ -54,7 +54,7 @@ class FileLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setDescription(\string $description) {
+    public function setDescription(string $description) {
         if($this->setModified('description', $description)->isModified()) {
             $this->description = $description;
         }
@@ -114,7 +114,7 @@ class FileLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setTitle(\string $title) {
+    public function setTitle(string $title) {
         if($this->setModified('title', $title)->isModified()) {
             $this->title = $title;
         }

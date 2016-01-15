@@ -9,34 +9,24 @@
  */
 namespace BiberLtd\Bundle\FileManagementBundle\Services;
 
-/** Extends CoreModel */
 use BiberLtd\Bundle\CoreBundle\CoreModel;
-/** Entities to be used */
 use BiberLtd\Bundle\FileManagementBundle\Entity as BundleEntity;
-/** Helper Models */
+use BiberLtd\Bundle\FileManagementBundle\Exception\InvalidFileTypeException;
 use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
-/** Core Service */
 use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
 use BiberLtd\Bundle\CoreBundle\Responses\ModelResponse;
 use BiberLtd\Bundle\CoreBundle\Exceptions as CoreExceptions;
 
 class FileManagementModel extends CoreModel {
-    /**
-     * @name            __construct()
-     *                  Constructor.
-     *
-     * @author          Can Berkol
-     * @author          Said Imamoglu
-     *
-     * @since           1.0.0
-     * @version         1.0.5
-     *
-     * @param           object          $kernel
-     * @param           string          $dbConnection  Database connection key as set in app/config.yml
-     * @param           string          $orm            ORM that is used.
-     */
-    public function __construct($kernel, $dbConnection = 'default', $orm = 'doctrine') {
-        parent::__construct($kernel, $dbConnection, $orm);
+	/**
+	 * FileManagementModel constructor.
+	 *
+	 * @param object      $kernel
+	 * @param string|null $dbConnection
+	 * @param string|null $orm
+	 */
+    public function __construct($kernel, string $dbConnection = null, string $orm = null) {
+        parent::__construct($kernel, $dbConnection ?? 'default', $orm ?? 'doctrine');
 
         $this->entity = array(
             'f' => array('name' => 'FileManagementBundle:File', 'alias' => 'f'),
@@ -45,15 +35,9 @@ class FileManagementModel extends CoreModel {
         );
     }
 
-    /**
-     * @name            __destruct()
-     *
-     * @author          Said Imamoglu
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     */
+	/**
+	 * Destructor
+	 */
     public function __destruct() {
         foreach ($this as $property => $value) {
             $this->$property = null;
@@ -75,10 +59,7 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFiles(array $collection) {
-		$timeStamp = time();
-		if (!is_array($collection)) {
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
-		}
+		$timeStamp = microtime();
 		$countDeleted = 0;
 		foreach($collection as $entry){
 			if($entry instanceof BundleEntity\File){
@@ -95,11 +76,11 @@ class FileManagementModel extends CoreModel {
 			}
 		}
 		if($countDeleted < 0){
-			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime());
 		}
 		$this->em->flush();
 
-		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -117,10 +98,7 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteFileUploadFolders(array $collection) {
-		$timeStamp = time();
-		if (!is_array($collection)) {
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
-		}
+		$timeStamp = microtime();
 		$countDeleted = 0;
 		foreach($collection as $entry){
 			if($entry instanceof BundleEntity\FileUploadFolder){
@@ -137,11 +115,11 @@ class FileManagementModel extends CoreModel {
 			}
 		}
 		if($countDeleted < 0){
-			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime());
 		}
 		$this->em->flush();
 
-		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -150,8 +128,8 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function doesFileExist($file, \bool $bypass = false) {
-		$timeStamp = time();
+	public function doesFileExist($file, bool $bypass = false) {
+		$timeStamp = microtime();
 		$exist = false;
 
 		$response = $this->getFile($file);
@@ -169,7 +147,7 @@ class FileManagementModel extends CoreModel {
 		if ($bypass) {
 			return $exist;
 		}
-		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -178,8 +156,8 @@ class FileManagementModel extends CoreModel {
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
 	 */
-	public function doesFileUploadFolderExist($folder, \bool $bypass = false) {
-		$timeStamp = time();
+	public function doesFileUploadFolderExist($folder, bool $bypass = false) {
+		$timeStamp = microtime();
 		$exist = false;
 
 		$response = $this->getFileUploadFolder($folder);
@@ -197,7 +175,7 @@ class FileManagementModel extends CoreModel {
 		if ($bypass) {
 			return $exist;
 		}
-		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse(true, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -206,9 +184,9 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getFile($file) {
-		$timeStamp = time();
+		$timeStamp = microtime();
 		if($file instanceof BundleEntity\File){
-			return new ModelResponse($file, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+			return new ModelResponse($file, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 		}
 		$result = null;
 		switch($file){
@@ -226,10 +204,10 @@ class FileManagementModel extends CoreModel {
 				break;
 		}
 		if(is_null($result)){
-			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime());
 		}
 
-		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -238,9 +216,9 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getFileUploadFolder($folder) {
-		$timeStamp = time();
+		$timeStamp = microtime();
 		if($folder instanceof BundleEntity\FileUploadFolder){
-			return new ModelResponse($folder, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+			return new ModelResponse($folder, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 		}
 		$result = null;
 		switch($folder){
@@ -252,10 +230,10 @@ class FileManagementModel extends CoreModel {
 				break;
 		}
 		if(is_null($result)){
-			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime());
 		}
 
-		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -273,15 +251,12 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertFiles(array $collection)	{
-		$timeStamp = time();
+		$timeStamp = microtime();
 		/** Parameter must be an array */
-		if (!is_array($collection)) {
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
-		}
 		$countInserts = 0;
 		$countLocalizations = 0;
-		$insertedItems = array();
-		$localizations = array();
+		$insertedItems = [];
+		$localizations = [];
 		foreach ($collection as $data) {
 			if ($data instanceof BundleEntity\File) {
 				$entity = $data;
@@ -344,9 +319,9 @@ class FileManagementModel extends CoreModel {
 		}
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime());
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -355,12 +330,9 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertFileLocalizations(array $collection) {
-		$timeStamp = time();
-		if (!is_array($collection)) {
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
-		}
+		$timeStamp = microtime();
 		$countInserts = 0;
-		$insertedItems = array();
+		$insertedItems = [];
 		foreach($collection as $data){
 			if($data instanceof BundleEntity\FileLocalization){
 				$entity = $data;
@@ -399,9 +371,9 @@ class FileManagementModel extends CoreModel {
 		}
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime());
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -419,12 +391,10 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function insertFileUploadFolders(array $collection) {
-		$timeStamp = time();
-		if (!is_array($collection)) {
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
-		}
+		$timeStamp = microtime();
+
 		$countInserts = 0;
-		$insertedItems = array();
+		$insertedItems = [];
 		foreach($collection as $data){
 			if($data instanceof BundleEntity\FileUploadFolder){
 				$entity = $data;
@@ -457,19 +427,16 @@ class FileManagementModel extends CoreModel {
 		}
 		if($countInserts > 0){
 			$this->em->flush();
-			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime());
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime());
 	}
 
     /*
      *
      */
 	public function listFiles(array $filter = null, array $sortOrder = null, array $limit = null){
-		$timeStamp = time();
-		if(!is_array($sortOrder) && !is_null($sortOrder)){
-			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
-		}
+		$timeStamp = microtime();
 		$oStr = $wStr = $gStr = $fStr = '';
 
 		$qStr = 'SELECT '.$this->entity['f']['alias'].', '.$this->entity['fl']['alias']
@@ -517,7 +484,7 @@ class FileManagementModel extends CoreModel {
 
 		$result = $q->getResult();
 
-		$entities = array();
+		$entities = [];
 		foreach($result as $entry){
 			$id = $entry->getFile()->getId();
 			if(!isset($unique[$id])){
@@ -527,9 +494,9 @@ class FileManagementModel extends CoreModel {
 		}
 		$totalRows = count($entities);
 		if ($totalRows < 1) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime());
 		}
-		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -541,7 +508,7 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
     public function listFilesInFolder($folder, array $filter = null, array $sortOrder = null, array $limit = null) {
-		$timeStamp = time();
+		$timeStamp = microtime();
 		$response = $this->getFileUploadFolder($folder);
 		if($response->error->exist){
 			return $response;
@@ -557,11 +524,48 @@ class FileManagementModel extends CoreModel {
         $response = $this->listFiles($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime();
 
 		return $response;
     }
 
+	/**
+	 * @param mixed $member
+	 * @param mixed $folder
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listFilesOfMemberInFolder($member, $folder, array $filter = null, array $sortOrder = null, array $limit = null) {
+		$timeStamp = microtime();
+		$mModel = $this->kernel->getContainer()->get('membermanagement.model');
+		$response = $this->getFileUploadFolder($folder);
+		if($response->error->exist){
+			return $response;
+		}
+		$folder = $response->result->set;
+		$response = $mModel->getMember($member);
+		if($response->error->exist){
+			return $response;
+		}
+		$member = $response->result->set;
+		unset($response);
+		$filter[] = array(
+			'glue' => ' and',
+			'condition' => array(
+				'column' => $this->entity['f']['alias'] . '.file_upload_folder',
+				'comparison' => '=',
+				'value' => $folder->getId())
+		);
+		$response = $this->listFiles($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = microtime();
+
+		return $response;
+	}
 	/**
 	 * @param mixed $site
 	 * @param array|null $filter
@@ -571,7 +575,7 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
     public function listFilesOfSite($site, array $filter = null, array $sortOrder = null, array $limit = null) {
-		$timeStamp = time();
+		$timeStamp = microtime();
 		$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
 		$response = $sModel->getSite($site);
 		if($response->error->exist){
@@ -588,7 +592,7 @@ class FileManagementModel extends CoreModel {
 		$response = $this->listFiles($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime();
 
 		return $response;
     }
@@ -601,11 +605,7 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function listFileUploadFolders(array $filter = null, array $sortOrder = null, array $limit = null) {
-		$timeStamp = time();
-		if (!is_array($sortOrder) && !is_null($sortOrder)) {
-			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
-		}
-
+		$timeStamp = microtime();
 		$oStr = $wStr = $gStr = $fStr = '';
 
 		$qStr = 'SELECT '.$this->entity['fuf']['alias']
@@ -649,23 +649,21 @@ class FileManagementModel extends CoreModel {
 
 		$totalRows = count($result);
 		if ($totalRows < 1) {
-			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime());
 		}
-		return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime());
 	}
 
 	/**
-	 * @param mixed $extension
+	 * @param string     $extension
 	 * @param array|null $filter
 	 * @param array|null $sortOrder
 	 * @param array|null $limit
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-    public function listFilesWithExtension($extension, array $filter = null, array $sortOrder = null, array $limit = null) {
-        if (!is_string($extension)) {
-			return $this->createException('InvalidParameterValueException', 'Extension must be a string.', 'E:S:007');
-        }
+    public function listFilesWithExtension(string $extension, array $filter = null, array $sortOrder = null, array $limit = null) {
+
         $filter[] = array(
             'glue' => ' and',
             'condition' => array(
@@ -677,20 +675,20 @@ class FileManagementModel extends CoreModel {
     }
 
 	/**
-	 * @param mixed $type
+	 * @param string     $type
 	 * @param array|null $filter
 	 * @param array|null $sortOrder
 	 * @param array|null $limit
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 * @throws \BiberLtd\Bundle\FileManagementBundle\Exception\InvalidFileTypeException
 	 */
-    public function listFilesWithType($type, array $filter = null, array $sortOrder = null, array $limit = null) {
-		$timeStamp = time();
+    public function listFilesWithType(string $type, array $filter = null, array $sortOrder = null, array $limit = null) {
+		$timeStamp = microtime();
 		$typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's');
         if(!in_array($type, $typeOpts)){
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Type must be one of the following: '.implode(', ', $typeOpts).'.', 'E:S:004');
+	        throw new InvalidFileTypeException($type);
 		}
-
         $filter[] = array(
             'glue' => ' and',
             'condition' => array(
@@ -701,7 +699,7 @@ class FileManagementModel extends CoreModel {
         $response = $this->listFiles($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->Execution->end = time();
+		$response->stats->Execution->end = microtime();
 
 		return $response;
     }
@@ -737,18 +735,15 @@ class FileManagementModel extends CoreModel {
 	}
 
 	/**
-	 * @param            $width
-	 * @param            $height
+	 * @param int        $width
+	 * @param int        $height
 	 * @param array|null $sortOrder
 	 * @param array|null $limit
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-    public function listImagesWithDimension($width, $height, array $sortOrder = null, array $limit = null) {
-		$timeStamp = time();
-        if (!is_integer($width) || !is_integer($height)) {
-            return $this->createException('InvalidParameterValueException', '$width and $height parameters must be integers.', 'E:S:008');
-        }
+    public function listImagesWithDimension(int $width, int $height, array $sortOrder = null, array $limit = null) {
+		$timeStamp = microtime();
 
         $filter[] = array(
             'glue' => ' and',
@@ -770,7 +765,7 @@ class FileManagementModel extends CoreModel {
         );
         $response =  $this->listFiles($filter, $sortOrder, $limit);
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->execution->end = time();
+		$response->stats->execution->end = microtime();
 
 		return $response;
     }
@@ -796,7 +791,7 @@ class FileManagementModel extends CoreModel {
 	}
 
 	/**
-	 * @param $file
+	 * @param mixed $file
 	 *
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
@@ -810,14 +805,10 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateFiles(array $collection){
-		$timeStamp = time();
-		/** Parameter must be an array */
-		if (!is_array($collection)) {
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
-		}
+		$timeStamp = microtime();
 		$countUpdates = 0;
-		$updatedItems = array();
-		$localizations = array();
+		$updatedItems = [];
+		$localizations = [];
 		foreach ($collection as $data) {
 			if ($data instanceof BundleEntity\File) {
 				$entity = $data;
@@ -896,9 +887,9 @@ class FileManagementModel extends CoreModel {
 		}
 		if($countUpdates > 0){
 			$this->em->flush();
-			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime());
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime());
 	}
 
 	/**
@@ -916,13 +907,9 @@ class FileManagementModel extends CoreModel {
 	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateFileUploadFolders(array $collection){
-		$timeStamp = time();
-		/** Parameter must be an array */
-		if (!is_array($collection)) {
-			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
-		}
+		$timeStamp = microtime();
 		$countUpdates = 0;
-		$updatedItems = array();
+		$updatedItems = [];
 		foreach($collection as $data){
 			if($data instanceof BundleEntity\FileUploadFolder){
 				$entity = $data;
@@ -975,8 +962,8 @@ class FileManagementModel extends CoreModel {
 		}
 		if($countUpdates > 0){
 			$this->em->flush();
-			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime());
 		}
-		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime());
 	}
 }
