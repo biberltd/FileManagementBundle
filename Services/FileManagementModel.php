@@ -432,9 +432,13 @@ class FileManagementModel extends CoreModel {
 		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime());
 	}
 
-    /*
-     *
-     */
+	/**
+	 * @param array|null $filter
+	 * @param array|null $sortOrder
+	 * @param array|null $limit
+	 *
+	 * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
 	public function listFiles(array $filter = null, array $sortOrder = null, array $limit = null){
 		$timeStamp = microtime();
 		$oStr = $wStr = $gStr = $fStr = '';
