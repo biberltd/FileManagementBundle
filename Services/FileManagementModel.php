@@ -703,7 +703,7 @@ class FileManagementModel extends CoreModel {
         $response = $this->listFiles($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->Execution->end = microtime(true);
+		$response->stats->execution->end = microtime(true);
 
 		return $response;
     }
