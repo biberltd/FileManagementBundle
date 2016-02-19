@@ -866,7 +866,7 @@ class FileManagementModel extends CoreModel {
 
     public function listFilesWithType($type, $filter = null, $sortOrder = null, $limit = null) {
 		$timeStamp = time();
-		$typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's');
+		$typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's', 'c');
         if(!in_array($type, $typeOpts)){
 			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Type must be one of the following: '.implode(', ', $typeOpts).'.', 'E:S:004');
 		}
@@ -881,7 +881,7 @@ class FileManagementModel extends CoreModel {
         $response = $this->listFiles($filter, $sortOrder, $limit);
 
 		$response->stats->execution->start = $timeStamp;
-		$response->stats->Execution->end = time();
+		$response->stats->execution->end = time();
 
 		return $response;
     }
