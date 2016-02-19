@@ -689,7 +689,7 @@ class FileManagementModel extends CoreModel {
 	 */
     public function listFilesWithType(string $type, array $filter = null, array $sortOrder = null, array $limit = null) {
 		$timeStamp = microtime(true);
-		$typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's');
+	    $typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's', 'c');
         if(!in_array($type, $typeOpts)){
 	        throw new InvalidFileTypeException($type);
 		}
