@@ -31,6 +31,7 @@ CREATE TABLE `file` (
   `date_updated` datetime NOT NULL COMMENT 'Date when the entry is alst updated',
   `date_removed` datetime DEFAULT NULL COMMENT 'Date when the entry is marked as removed.',
   `tags` text DEFAULT NULL COMMENT 'Comma seperated and user defined tags of file.',
+  `exif` text DEFAULT NULL COMMENT 'Exif data of file if it exists.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idxUFileId` (`id`) USING BTREE,
   KEY `idxNFileMimeType` (`mime_type`) USING BTREE,
