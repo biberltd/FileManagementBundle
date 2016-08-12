@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<skipper version="3.2.6.1309" mvc="Symfony2" orm="Doctrine2" name="FileManagementBundle" uuid="d71d8b0d-88fb-462b-940a-903db1e8d305">
+  <external-module storage-path="../../site-management-bundle/ORM/SiteManagement.module.xml"/>
+  <external-module storage-path="../../multilanguage-support-bundle/ORM/MultiLanguageSupport.module.xml"/>
+  <external-module storage-path="FileManagement.module.xml"/>
+  <visual-data>
+    <association uuid="02e3ef16-39f8-42b5-891d-96224803b169" color="#969696"/>
+    <association uuid="45c125cd-0ba3-4a9c-973e-92bbcfb91a59" color="#969696"/>
+    <association uuid="4a21a97e-810e-4e2d-a330-69d23cf801c7" color="#969696"/>
+    <association uuid="691cd89a-3534-4a4c-bf70-544fa15a4c35" color="#969696"/>
+    <association uuid="71f15a54-6bc9-4510-84b1-2b2817781440" color="#969696"/>
+    <association uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94" color="#969696"/>
+    <association uuid="a50bcd82-290b-4009-b270-6e47a63148cc" color="#969696"/>
+    <association uuid="b210e152-462a-45f8-b840-75b0217b73c5" color="#969696"/>
+    <association uuid="dcbf1caf-6474-4dfe-90be-7b58aa71c5c7" color="#969696"/>
+    <association uuid="e759f273-144f-4e29-817a-0fe9f39c4187" color="#969696"/>
+    <module uuid="264804cf-5ddd-4089-aaa2-d7c0f129a5ed" position-x="640" position-y="106"/>
+    <module uuid="860bb986-ef71-4cef-9da2-f560e58c2569" position-x="50" position-y="50"/>
+    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" position-x="1466" position-y="51"/>
+    <project uuid="d71d8b0d-88fb-462b-940a-903db1e8d305" size-x="0" size-x2="2211" size-y="0" size-y2="588"/>
+  </visual-data>
+</skipper>
