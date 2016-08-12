@@ -887,6 +887,40 @@ class FileManagementModel extends CoreModel {
     }
 
     /**
+     * @param $type
+     * @param $site
+     * @param null $filter
+     * @param null $sortOrder
+     * @param null $limit
+     * @return ModelResponse
+     */
+    public function listFilesWithTypeOfSite($type, $site, $filter = null, $sortOrder = null, $limit = null) {
+        $timeStamp = time();
+        $typeOpts = array('a', 'i', 'v', 'f', 'd', 'p', 's', 'c');
+        if(!in_array($type, $typeOpts)){
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Type must be one of the following: '.implode(', ', $typeOpts).'.', 'E:S:004');
+        }
+
+        if(!is_integer($site)){
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Site parameter must be int', 'E:S:004');
+        }
+
+        $filter[] = array(
+            'glue' => ' and',
+            'condition' => array(
+                'column' => $this->entity['f']['alias'] . '.type',
+                'comparison' => '=',
+                'value' => $type)
+        );
+        $response = $this->listFilesOfSite($site, $filter, $sortOrder, $limit);
+
+        $response->stats->execution->start = $timeStamp;
+        $response->stats->execution->end = time();
+
+        return $response;
+    }
+
+    /**
      * @name            listDocuments()
      * 
      * @since           1.0.0
