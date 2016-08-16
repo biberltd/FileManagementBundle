@@ -58,7 +58,7 @@
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\File" to="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" caption="idxFFolderOfFile" owner-alias="files" inverse-alias="folder" many-owner="true" many-inverse="false" parent-required="true" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\File" to="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" caption="idxFFolderOfFile" owner-alias="" inverse-alias="folder" many-owner="true" many-inverse="false" parent-required="true" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
       <association-field from="folder" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -133,7 +133,7 @@
         </attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFLocalizedFile" owner-alias="localizations" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFFileOfFileLocalization" owner-alias="" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
       <association-field from="file" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -144,7 +144,7 @@
         </attribute>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFFileLocalizationLanguage" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfFileLocalization" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -165,6 +165,6 @@
     <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
     <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="240" position-y="147" size-x="0" size-x2="124" size-y="0" size-y2="269"/>
-    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="#C70000" size-x="26" size-x2="695" size-y="1" size-y2="487"/>
+    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="#C70000" size-x="26" size-x2="695" size-y="1" size-y2="535"/>
   </visual-data>
 </skipper>

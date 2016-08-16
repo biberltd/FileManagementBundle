@@ -57,8 +57,8 @@ CREATE TABLE `file_localization` (
   `description` text COLLATE utf8_turkish_ci COMMENT 'Descripiton of file.',
   UNIQUE KEY `idxUFileLocalization` (`file`,`language`) USING BTREE,
   KEY `idxFFileLocalizationLanguage` (`language`) USING BTREE,
-  CONSTRAINT `idxFFileLocalizationLanguage` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFLocalizedFile` FOREIGN KEY (`file`) REFERENCES `file` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `idxFLanguageOfFileLocalization` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFFileOfFileLocalization` FOREIGN KEY (`file`) REFERENCES `file` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci;
 
 -- ----------------------------
