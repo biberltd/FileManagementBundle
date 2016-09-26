@@ -198,7 +198,7 @@ class File extends CoreLocalizableEntity
     public function getFolder() {
         return $this->folder;
     }
-    
+
 	/**
 	 * @param int $height
 	 *
