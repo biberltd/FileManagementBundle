@@ -178,26 +178,27 @@ class File extends CoreLocalizableEntity
         return $this->extension;
     }
 
-	/**
-	 * @param string $folder
-	 *
-	 * @return $this
-	 */
-    public function setFolder(string $folder) {
+
+    /**
+     * @param \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder $folder
+     *
+     * @return $this
+     */
+    public function setFolder(FileUploadFolder $folder) {
         if(!$this->setModified('folder', $folder)->isModified()) {
             return $this;
         }
-		$this->folder = $folder;
-		return $this;
+        $this->folder = $folder;
+        return $this;
     }
 
-	/**
-	 * @return \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder
-	 */
+    /**
+     * @return \BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder
+     */
     public function getFolder() {
         return $this->folder;
     }
-
+    
 	/**
 	 * @param int $height
 	 *
